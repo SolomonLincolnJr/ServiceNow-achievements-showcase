@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-02 16:30:00">
+    <!-- SNAS System Properties Configuration -->
+    
+    <sys_properties>
+        <!-- Manus.ai API Configuration -->
+        <sys_property>
+            <active>true</active>
+            <description>Manus.ai API base URL for AI badge prioritization and content generation</description>
+            <name>x_snc_snas_port.manus_ai_base_url</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>manus_ai_base_url_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.manus_ai_base_url</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_manus_ai_base_url_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>string</type>
+            <value>https://api.manus.ai/v1</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <sys_property>
+            <active>true</active>
+            <description>Encrypted Manus.ai API key for secure AI integration - Role-based access control enabled</description>
+            <name>x_snc_snas_port.manus_ai_api_key</name>
+            <read_roles>x_snc_snas_port.admin</read_roles>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>manus_ai_api_key_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.manus_ai_api_key</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_manus_ai_api_key_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>password2</type>
+            <value></value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <!-- Performance SLA Configuration -->
+        <sys_property>
+            <active>true</active>
+            <description>Maximum response time in milliseconds for AI operations (SLA requirement: &lt;2 seconds)</description>
+            <name>x_snc_snas_port.ai_response_timeout_ms</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>ai_response_timeout_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.ai_response_timeout_ms</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_ai_response_timeout_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>integer</type>
+            <value>2000</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <!-- Badge Prioritization Configuration -->
+        <sys_property>
+            <active>true</active>
+            <description>Priority boost points for CSA certification when targeting IT recruiters</description>
+            <name>x_snc_snas_port.csa_priority_boost</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>csa_priority_boost_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.csa_priority_boost</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_csa_priority_boost_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>integer</type>
+            <value>25</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <sys_property>
+            <active>true</active>
+            <description>Priority boost points for recent achievements (earned within 90 days)</description>
+            <name>x_snc_snas_port.recent_achievement_boost</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>recent_achievement_boost_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.recent_achievement_boost</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_recent_achievement_boost_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>integer</type>
+            <value>20</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <sys_property>
+            <active>true</active>
+            <description>Priority boost points for certification type achievements</description>
+            <name>x_snc_snas_port.certification_boost</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>certification_boost_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.certification_boost</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_certification_boost_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>integer</type>
+            <value>30</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <!-- Veteran Mission Configuration -->
+        <sys_property>
+            <active>true</active>
+            <description>Enable veteran-focused mission branding and Service to Success initiative integration</description>
+            <name>x_snc_snas_port.veteran_mission_enabled</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>veteran_mission_enabled_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.veteran_mission_enabled</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_veteran_mission_enabled_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>true_false</type>
+            <value>true</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <sys_property>
+            <active>true</active>
+            <description>Primary brand color for veteran mission theme (Navy: #1B365D)</description>
+            <name>x_snc_snas_port.veteran_brand_primary</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>veteran_brand_primary_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.veteran_brand_primary</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_veteran_brand_primary_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>string</type>
+            <value>#1B365D</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <sys_property>
+            <active>true</active>
+            <description>Secondary brand color for veteran mission theme (Gold: #FFD700)</description>
+            <name>x_snc_snas_port.veteran_brand_secondary</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>veteran_brand_secondary_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.veteran_brand_secondary</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_veteran_brand_secondary_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>string</type>
+            <value>#FFD700</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <!-- Data Import Configuration -->
+        <sys_property>
+            <active>true</active>
+            <description>Enable scheduled badge data import from external sources (October 10 readiness)</description>
+            <name>x_snc_snas_port.badge_import_enabled</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>badge_import_enabled_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.badge_import_enabled</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_badge_import_enabled_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>true_false</type>
+            <value>true</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+
+        <sys_property>
+            <active>true</active>
+            <description>Target date for badge data import completion (YYYY-MM-DD format)</description>
+            <name>x_snc_snas_port.badge_import_target_date</name>
+            <read_roles/>
+            <suffix/>
+            <sys_class_name>sys_properties</sys_class_name>
+            <sys_created_by>solomon.washington</sys_created_by>
+            <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+            <sys_id>badge_import_target_date_001</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_snas_port.badge_import_target_date</sys_name>
+            <sys_package/>
+            <sys_policy/>
+            <sys_scope>x_snc_snas_port</sys_scope>
+            <sys_update_name>sys_properties_badge_import_target_date_001</sys_update_name>
+            <sys_updated_by>solomon.washington</sys_updated_by>
+            <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+            <type>string</type>
+            <value>2024-10-10</value>
+            <write_roles>x_snc_snas_port.admin</write_roles>
+        </sys_property>
+    </sys_properties>
+</unload>

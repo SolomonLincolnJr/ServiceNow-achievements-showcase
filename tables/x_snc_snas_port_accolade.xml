@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-02 16:50:00">
+    <sys_db_object>
+        <access>public</access>
+        <actions_access>true</actions_access>
+        <alter_access>true</alter_access>
+        <caller_access/>
+        <client_scripts_access>true</client_scripts_access>
+        <configuration_access>false</configuration_access>
+        <create_access>true</create_access>
+        <create_access_controls>false</create_access_controls>
+        <delete_access>false</delete_access>
+        <extension_model/>
+        <is_extendable>false</is_extendable>
+        <label>SNAS Accolade</label>
+        <live_feed_enabled>false</live_feed_enabled>
+        <name>x_snc_snas_port_accolade</name>
+        <number_ref/>
+        <provider_class/>
+        <read_access>true</read_access>
+        <scriptable_table>true</scriptable_table>
+        <super_class/>
+        <sys_class_name>sys_db_object</sys_class_name>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:50:00</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>accolade_table_001</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SNAS Accolade</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_db_object_accolade_table_001</sys_update_name>
+        <sys_updated_by>solomon.washington</sys_updated_by>
+        <sys_updated_on>2024-10-02 16:50:00</sys_updated_on>
+        <update_access>true</update_access>
+        <user_role/>
+        <ws_access>true</ws_access>
+    </sys_db_object>
+
+    <!-- Accolade Title Field -->
+    <sys_dictionary>
+        <active>true</active>
+        <array>false</array>
+        <audit>false</audit>
+        <calculation/>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label>Accolade Title</column_label>
+        <comments/>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>title</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <internal_type display_value="String">string</internal_type>
+        <max_length>255</max_length>
+        <name>x_snc_snas_port_accolade</name>
+        <next_element/>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_dictionary</sys_class_name>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:50:00</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>accolade_title_field_001</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Accolade Title</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_dictionary_accolade_title_field_001</sys_update_name>
+        <sys_updated_by>solomon.washington</sys_updated_by>
+        <sys_updated_on>2024-10-02 16:50:00</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_dictionary>
+
+    <!-- Source Field -->
+    <sys_dictionary>
+        <active>true</active>
+        <array>false</array>
+        <audit>false</audit>
+        <calculation/>
+        <choice/>
+        <choice_field/>
+        <choice_table/>
+        <column_label>Source Organization</column_label>
+        <comments>Organization or entity that awarded the accolade</comments>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>source</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <internal_type display_value="String">string</internal_type>
+        <max_length>255</max_length>
+        <name>x_snc_snas_port_accolade</name>
+        <next_element/>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_dictionary</sys_class_name>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:50:00</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>accolade_source_field_001</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Source Organization</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_dictionary_accolade_source_field_001</sys_update_name>
+        <sys_updated_by>solomon.washington</sys_updated_by>
+        <sys_updated_on>2024-10-02 16:50:00</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_dictionary>
+
+    <!-- Impact Level Field -->
+    <sys_dictionary>
+        <active>true</active>
+        <array>false</array>
+        <audit>false</audit>
+        <calculation/>
+        <choice>1</choice>
+        <choice_field/>
+        <choice_table/>
+        <column_label>Impact Level</column_label>
+        <comments>Level of impact and significance of the accolade</comments>
+        <create_roles/>
+        <default_value/>
+        <defaultsort/>
+        <delete_roles/>
+        <dependent/>
+        <dependent_on_field/>
+        <display>false</display>
+        <dynamic_creation>false</dynamic_creation>
+        <dynamic_creation_script/>
+        <dynamic_default_value/>
+        <dynamic_ref_qual/>
+        <element>impact_level</element>
+        <element_reference>false</element_reference>
+        <foreign_database/>
+        <function_definition/>
+        <function_field>false</function_field>
+        <internal_type display_value="Choice">choice</internal_type>
+        <max_length>40</max_length>
+        <name>x_snc_snas_port_accolade</name>
+        <next_element/>
+        <primary>false</primary>
+        <read_only>false</read_only>
+        <read_roles/>
+        <reference/>
+        <reference_cascade_rule/>
+        <reference_floats>false</reference_floats>
+        <reference_key/>
+        <reference_qual/>
+        <reference_qual_condition/>
+        <reference_type/>
+        <spell_check>false</spell_check>
+        <staged>false</staged>
+        <sys_class_name>sys_dictionary</sys_class_name>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:50:00</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>accolade_impact_field_001</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Impact Level</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_dictionary_accolade_impact_field_001</sys_update_name>
+        <sys_updated_by>solomon.washington</sys_updated_by>
+        <sys_updated_on>2024-10-02 16:50:00</sys_updated_on>
+        <table_reference>false</table_reference>
+        <text_index>false</text_index>
+        <unique>false</unique>
+        <use_dependent_field>false</use_dependent_field>
+        <use_dynamic_default>false</use_dynamic_default>
+        <use_reference_qualifier>simple</use_reference_qualifier>
+        <virtual>false</virtual>
+        <widget/>
+        <write_roles/>
+        <xml_view>false</xml_view>
+    </sys_dictionary>
+
+    <!-- Choice options for Impact Level -->
+    <sys_choice>
+        <choice_table>x_snc_snas_port_accolade</choice_table>
+        <choice_field>impact_level</choice_field>
+        <choice_value>high</choice_value>
+        <choice_label>High Impact</choice_label>
+        <choice_order>100</choice_order>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:50:00</sys_created_on>
+        <sys_id>choice_high_impact_001</sys_id>
+        <sys_scope>x_snc_snas_port</sys_scope>
+    </sys_choice>
+
+    <sys_choice>
+        <choice_table>x_snc_snas_port_accolade</choice_table>
+        <choice_field>impact_level</choice_field>
+        <choice_value>medium</choice_value>
+        <choice_label>Medium Impact</choice_label>
+        <choice_order>200</choice_order>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:50:00</sys_created_on>
+        <sys_id>choice_medium_impact_001</sys_id>
+        <sys_scope>x_snc_snas_port</sys_scope>
+    </sys_choice>
+
+    <sys_choice>
+        <choice_table>x_snc_snas_port_accolade</choice_table>
+        <choice_field>impact_level</choice_field>
+        <choice_value>low</choice_value>
+        <choice_label>Standard Impact</choice_label>
+        <choice_order>300</choice_order>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:50:00</sys_created_on>
+        <sys_id>choice_low_impact_001</sys_id>
+        <sys_scope>x_snc_snas_port</sys_scope>
+    </sys_choice>
+
+</unload>
