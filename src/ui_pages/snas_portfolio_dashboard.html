@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceNow Achievements Showcase - Veteran Excellence Portfolio</title>
+    <style>
+        /* Veteran Mission Branding Colors */
+        :root {
+            --veteran-navy: #1B365D;
+            --veteran-gold: #FFD700;
+            --light-gray: #f8f9fa;
+            --medium-gray: #6c757d;
+            --dark-gray: #343a40;
+            --success-green: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--veteran-navy) 0%, #2c5282 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--veteran-navy);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="stars" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23FFD700" opacity="0.3"/></pattern></defs><rect width="100" height="20" fill="url(%23stars)"/></svg>') repeat;
+            opacity: 0.2;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--veteran-gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .veteran-badge {
+            display: inline-block;
+            background: var(--veteran-gold);
+            color: var(--veteran-navy);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: -2rem auto 0;
+            padding: 0 2rem 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--veteran-gold);
+        }
+
+        .control-row {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .control-group {
+            flex: 1;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--veteran-navy);
+        }
+
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .control-group select:focus,
+        .control-group input:focus {
+            outline: none;
+            border-color: var(--veteran-navy);
+        }
+
+        .btn {
+            background: var(--veteran-navy);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2c5282;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(27,54,93,0.3);
+        }
+
+        .btn.btn-secondary {
+            background: var(--veteran-gold);
+            color: var(--veteran-navy);
+        }
+
+        .btn.btn-secondary:hover {
+            background: #ffc107;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--veteran-gold);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--veteran-navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--medium-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .badge-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--veteran-navy);
+        }
+
+        .badge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .badge-header {
+            background: linear-gradient(135deg, var(--veteran-navy), #2c5282);
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .priority-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--veteran-gold);
+        }
+
+        .priority-indicator.medium {
+            background: #ffc107;
+        }
+
+        .priority-indicator.low {
+            background: #6c757d;
+        }
+
+        .badge-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-issuer {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .badge-body {
+            padding: 1.5rem;
+        }
+
+        .badge-description {
+            margin-bottom: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .badge-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .badge-date {
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+        }
+
+        .priority-score {
+            background: var(--veteran-gold);
+            color: var(--veteran-navy);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .ai-insights {
+            background: #f8f9ff;
+            border: 1px solid #e3e6ff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .ai-insights h4 {
+            color: var(--veteran-navy);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ai-insights p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-meter {
+            background: #e9ecef;
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--veteran-navy), var(--veteran-gold));
+            transition: width 0.5s ease;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: white;
+        }
+
+        .loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid var(--veteran-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255,255,255,0.7);
+            background: rgba(27,54,93,0.1);
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .control-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .badges-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-container {
+                padding: 0 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>ServiceNow Achievements Showcase</h1>
+            <p class="subtitle">AI-Enhanced Veteran Professional Portfolio</p>
+            <div class="veteran-badge">Service to Success Initiative</div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="control-panel">
+            <div class="control-row">
+                <div class="control-group">
+                    <label for="audience-select">Target Audience</label>
+                    <select id="audience-select">
+                        <option value="it_recruiters">IT Recruiters & Hiring Managers</option>
+                        <option value="veteran_community">Veteran Community</option>
+                        <option value="servicenow_professionals">ServiceNow Professionals</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="content-type">Content Focus</label>
+                    <select id="content-type">
+                        <option value="all">All Achievements</option>
+                        <option value="certifications">Certifications Only</option>
+                        <option value="recent">Recent Achievements</option>
+                        <option value="servicenow">ServiceNow Specific</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <button id="prioritize-btn" class="btn">AI Prioritize</button>
+                </div>
+                <div class="control-group">
+                    <button id="generate-content-btn" class="btn btn-secondary">Generate Content</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-badges">40+</div>
+                <div class="stat-label">Total Achievements</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="certifications">15+</div>
+                <div class="stat-label">Certifications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="servicenow-badges">25+</div>
+                <div class="stat-label">ServiceNow Badges</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="ai-confidence">95%</div>
+                <div class="stat-label">AI Confidence</div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <h3>AI Processing Your Achievements...</h3>
+            <p>Applying context-aware prioritization and generating veteran-focused content</p>
+        </div>
+
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+
+        <div id="badges-container" class="badges-grid">
+            <!-- Badges will be populated by JavaScript -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 ServiceNow Achievements Showcase (SNAS) | Veteran Excellence in Technology</p>
+        <p>Powered by AI-Enhanced Portfolio Management | Service to Success Initiative</p>
+    </footer>
+
+    <script>
+        // SNAS Portfolio Dashboard JavaScript
+        class SNASPortfolio {
+            constructor() {
+                this.apiEndpoint = '/api/x_snc_snas_port/achievement';
+                this.currentBadges = [];
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.loadInitialData();
+            }
+
+            bindEvents() {
+                document.getElementById('prioritize-btn').addEventListener('click', () => this.prioritizeBadges());
+                document.getElementById('generate-content-btn').addEventListener('click', () => this.generateContent());
+                document.getElementById('audience-select').addEventListener('change', () => this.onContextChange());
+                document.getElementById('content-type').addEventListener('change', () => this.onContextChange());
+            }
+
+            async loadInitialData() {
+                try {
+                    this.showLoading(true);
+                    
+                    // Sample data representing Solomon's achievements
+                    const sampleBadges = [
+                        {
+                            id: 'csa-001',
+                            name: 'Certified System Administrator (CSA)',
+                            issuer: 'ServiceNow',
+                            type: 'certification',
+                            date_earned: '2024-08-15',
+                            description: 'Comprehensive ServiceNow platform administration certification demonstrating expertise in system configuration, user management, and platform maintenance.',
+                            category: 'Platform Administration'
+                        },
+                        {
+                            id: 'cis-itsm-001',
+                            name: 'Certified Implementation Specialist - ITSM',
+                            issuer: 'ServiceNow',
+                            type: 'certification',
+                            date_earned: '2024-07-22',
+                            description: 'Advanced ITSM implementation certification covering incident, problem, change, and service catalog management.',
+                            category: 'ITSM Implementation'
+                        },
+                        {
+                            id: 'riseup-001',
+                            name: 'RiseUp Achievement Badge',
+                            issuer: 'ServiceNow',
+                            type: 'achievement',
+                            date_earned: '2024-09-10',
+                            description: 'Recognition for outstanding contribution to diversity and inclusion in technology through mentorship and community involvement.',
+                            category: 'Community Impact'
+                        },
+                        {
+                            id: 'dev-fundamentals-001',
+                            name: 'Application Development Fundamentals',
+                            issuer: 'ServiceNow',
+                            type: 'badge',
+                            date_earned: '2024-06-30',
+                            description: 'Foundational development skills including scripting, workflow design, and application architecture.',
+                            category: 'Development'
+                        },
+                        {
+                            id: 'leadership-001',
+                            name: 'Military Leadership Excellence',
+                            issuer: 'U.S. Navy',
+                            type: 'achievement',
+                            date_earned: '2020-03-15',
+                            description: 'Demonstrated exceptional leadership capabilities in high-pressure military environments with focus on team development and mission success.',
+                            category: 'Leadership'
+                        }
+                    ];
+
+                    this.currentBadges = sampleBadges;
+                    this.renderBadges(sampleBadges);
+                    this.showLoading(false);
+                    
+                } catch (error) {
+                    this.showError('Failed to load badge data: ' + error.message);
+                    this.showLoading(false);
+                }
+            }
+
+            async prioritizeBadges() {
+                try {
+                    this.showLoading(true);
+                    this.clearMessages();
+
+                    const audience = document.getElementById('audience-select').value;
+                    const contentType = document.getElementById('content-type').value;
+
+                    // Simulate AI prioritization
+                    const prioritizedBadges = this.simulateAIPrioritization(this.currentBadges, audience, contentType);
+                    
+                    this.renderBadges(prioritizedBadges);
+                    this.showSuccess('AI prioritization completed! Badges ranked for ' + audience.replace('_', ' ') + ' audience.');
+                    this.showLoading(false);
+                    
+                } catch (error) {
+                    this.showError('Prioritization failed: ' + error.message);
+                    this.showLoading(false);
+                }
+            }
+
+            simulateAIPrioritization(badges, audience, contentType) {
+                // Simulate the AchievementAPI.js prioritization logic
+                return badges.map(badge => {
+                    let score = 50; // Base score
+                    let reasoning = [];
+
+                    // CSA boost for IT recruiters
+                    if (badge.name.includes('CSA') && audience === 'it_recruiters') {
+                        score += 25;
+                        reasoning.push('CSA certification priority boost (+25)');
+                    }
+
+                    // Recent achievements boost
+                    const daysSince = this.calculateDaysSince(badge.date_earned);
+                    if (daysSince <= 90) {
+                        score += 20;
+                        reasoning.push('Recent achievement boost (+20)');
+                    }
+
+                    // Certification type boost
+                    if (badge.type === 'certification') {
+                        score += 30;
+                        reasoning.push('Certification type boost (+30)');
+                    }
+
+                    // ServiceNow relevance
+                    if (badge.issuer === 'ServiceNow') {
+                        score += 15;
+                        reasoning.push('ServiceNow platform relevance (+15)');
+                    }
+
+                    // Audience-specific boosts
+                    if (audience === 'veteran_community' && badge.category === 'Leadership') {
+                        score += 15;
+                        reasoning.push('Veteran leadership relevance (+15)');
+                    }
+
+                    return {
+                        ...badge,
+                        priority_score: score,
+                        reasoning: reasoning,
+                        display_weight: score >= 100 ? 'high' : score >= 75 ? 'medium' : 'low',
+                        ai_confidence: Math.min(0.95, 0.6 + (score - 50) / 100)
+                    };
+                }).sort((a, b) => b.priority_score - a.priority_score);
+            }
+
+            calculateDaysSince(dateStr) {
+                const earnedDate = new Date(dateStr);
+                const currentDate = new Date();
+                const timeDiff = currentDate - earnedDate;
+                return Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            }
+
+            async generateContent() {
+                try {
+                    this.showLoading(true);
+                    this.clearMessages();
+
+                    // Simulate content generation delay
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    this.showSuccess('AI content generated! LinkedIn posts and professional summaries created for top-priority badges.');
+                    this.showLoading(false);
+                    
+                } catch (error) {
+                    this.showError('Content generation failed: ' + error.message);
+                    this.showLoading(false);
+                }
+            }
+
+            renderBadges(badges) {
+                const container = document.getElementById('badges-container');
+                container.innerHTML = '';
+
+                badges.forEach(badge => {
+                    const badgeCard = this.createBadgeCard(badge);
+                    container.appendChild(badgeCard);
+                });
+            }
+
+            createBadgeCard(badge) {
+                const card = document.createElement('div');
+                card.className = 'badge-card';
+
+                const priorityClass = badge.display_weight || 'medium';
+                const score = badge.priority_score || 50;
+                const confidence = badge.ai_confidence || 0.75;
+
+                card.innerHTML = `
+                    <div class="badge-header">
+                        <div class="priority-indicator ${priorityClass}"></div>
+                        <h3 class="badge-title">${badge.name}</h3>
+                        <p class="badge-issuer">${badge.issuer}</p>
+                    </div>
+                    <div class="badge-body">
+                        <p class="badge-description">${badge.description}</p>
+                        ${badge.reasoning ? this.renderAIInsights(badge) : ''}
+                        <div class="badge-meta">
+                            <span class="badge-date">Earned: ${new Date(badge.date_earned).toLocaleDateString()}</span>
+                            <span class="priority-score">Score: ${Math.round(score)}</span>
+                        </div>
+                    </div>
+                `;
+
+                return card;
+            }
+
+            renderAIInsights(badge) {
+                if (!badge.reasoning) return '';
+
+                const confidence = Math.round((badge.ai_confidence || 0.75) * 100);
+                
+                return `
+                    <div class="ai-insights">
+                        <h4>🤖 AI Insights</h4>
+                        <p><strong>Prioritization Factors:</strong></p>
+                        <p>${badge.reasoning.join(', ')}</p>
+                        <p><strong>AI Confidence:</strong> ${confidence}%</p>
+                        <div class="confidence-meter">
+                            <div class="confidence-fill" style="width: ${confidence}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            onContextChange() {
+                // Auto-prioritize when context changes
+                if (this.currentBadges.length > 0) {
+                    this.prioritizeBadges();
+                }
+            }
+
+            showLoading(show) {
+                document.getElementById('loading').style.display = show ? 'block' : 'none';
+            }
+
+            showError(message) {
+                this.clearMessages();
+                const container = document.getElementById('error-container');
+                container.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+
+            showSuccess(message) {
+                this.clearMessages();
+                const container = document.getElementById('success-container');
+                container.innerHTML = `<div class="success-message">${message}</div>`;
+            }
+
+            clearMessages() {
+                document.getElementById('error-container').innerHTML = '';
+                document.getElementById('success-container').innerHTML = '';
+            }
+        }
+
+        // Initialize the portfolio dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            new SNASPortfolio();
+        });
+    </script>
+</body>
+</html>
