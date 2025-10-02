@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-02 16:30:00">
+    <sys_scope>
+        <active>true</active>
+        <admin_role/>
+        <can_edit_in_studio>true</can_edit_in_studio>
+        <enforce_license>none</enforce_license>
+        <guided_setup_guid/>
+        <hide_sp_dependencies>false</hide_sp_dependencies>
+        <hint/>
+        <id>sn_snas_portfolio</id>
+        <js_level>helsinki</js_level>
+        <licensable>false</licensable>
+        <license_category>none</license_category>
+        <license_definition/>
+        <license_model>none</license_model>
+        <logo/>
+        <menu/>
+        <name>ServiceNow Achievements Showcase (SNAS)</name>
+        <private>true</private>
+        <restrictable>true</restrictable>
+        <runtime_access_tracking>permissive</runtime_access_tracking>
+        <scope>x_snc_snas_port</scope>
+        <scoped_administration>false</scoped_administration>
+        <short_description>AI-enhanced portfolio management for veteran ServiceNow professionals showcasing 40+ badges, certifications, and achievements</short_description>
+        <source>x_snc_snas_port</source>
+        <sys_class_name>sys_scope</sys_class_name>
+        <sys_created_by>solomon.washington</sys_created_by>
+        <sys_created_on>2024-10-02 16:30:00</sys_created_on>
+        <sys_id>a1b2c3d4e5f6789012345678901234567890</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>ServiceNow Achievements Showcase (SNAS)</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>global</sys_scope>
+        <sys_update_name>sys_scope_a1b2c3d4e5f6789012345678901234567890</sys_update_name>
+        <sys_updated_by>solomon.washington</sys_updated_by>
+        <sys_updated_on>2024-10-02 16:30:00</sys_updated_on>
+        <template/>
+        <trackable>true</trackable>
+        <uninstall_blocked>false</uninstall_blocked>
+        <vendor/>
+        <vendor_prefix/>
+        <version>1.0.0</version>
+    </sys_scope>
+</unload>
