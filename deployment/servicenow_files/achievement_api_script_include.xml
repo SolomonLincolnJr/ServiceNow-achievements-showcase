@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-03 18:30:00">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_snas_port.AchievementAPI</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AI-enhanced achievement prioritization API for SNAS portfolio management</description>
+        <name>AchievementAPI</name>
+        <script><![CDATA[
+var AchievementAPI = Class.create();
+AchievementAPI.prototype = {
+    initialize: function() {
+        // Initialize API configuration
+        this.apiKey = gs.getProperty('x_snc_snas_port.ai_api_key', '');
+        this.endpoint = gs.getProperty('x_snc_snas_port.ai_endpoint', 'https://api.manus.ai/v1/');
+        this.timeout = parseInt(gs.getProperty('x_snc_snas_port.ai_timeout', '30000'));
+        this.maxRetries = 3;
+        this.retryDelay = 1000; // 1 second
+        
+        // Performance tracking
+        this.slaTarget = 2000; // 2 seconds SLA
+        this.startTime = new GlideDateTime().getNumericValue();
+    },
+    
+    /**
+     * Main method to prioritize achievements using AI
+     * @param {Object} params - Configuration object
+     * @param {Array} params.achievements - Array of achievement objects
+     * @param {Object} params.context - Context for prioritization
+     * @param {string} params.context.audience - Target audience
+     * @param {boolean} params.context.include_reasoning - Include AI reasoning
+     * @returns {Object} Prioritized achievements with confidence score
+     */
+    prioritizeAchievements: function(params) {
+        try {
+            // Validate input parameters
+            if (!params || !params.achievements || !Array.isArray(params.achievements)) {
+                throw new Error('Invalid achievements array provided');
+            }
+            
+            if (params.achievements.length === 0) {
+                return this._getEmptyResult();
+            }
+            
+            // Log API call for monitoring
+            this._logAPICall('prioritizeAchievements', params);
+            
+            // Try AI API first
+            if (this._isAIAvailable()) {
+                var aiResult = this._callAIAPI(params);
+                if (aiResult && aiResult.success) {
+                    this._logPerformance('AI_SUCCESS', aiResult.responseTime);
+                    return this._formatAIResponse(aiResult.data, params);
+                }
+            }
+            
+            // Fallback to local prioritization
+            gs.info('[SNAS] Using fallback prioritization algorithm');
+            var fallbackResult = this._getFallbackPrioritization(params);
+            this._logPerformance('FALLBACK_SUCCESS', this._getElapsedTime());
+            
+            return fallbackResult;
+            
+        } catch (e) {
+            gs.error('[SNAS] Error in prioritizeAchievements: ' + e.message);
+            this._logPerformance('ERROR', this._getElapsedTime());
+            return this._getFallbackPrioritization(params);
+        }
+    },
+    
+    /**
+     * Check if AI API is available and configured
+     * @returns {boolean} True if AI is available
+     */
+    _isAIAvailable: function() {
+        return !gs.nil(this.apiKey) && 
+               !gs.nil(this.endpoint) && 
+               this.apiKey.length > 10;
+    },
+    
+    /**
+     * Call external AI API for achievement prioritization
+     * @param {Object} params - Request parameters
+     * @returns {Object} API response
+     */
+    _callAIAPI: function(params) {
+        try {
+            var request = new sn_ws.RESTMessageV2();
+            request.setEndpoint(this.endpoint + 'prioritize-badges');
+            request.setHttpMethod('POST');
+            request.setRequestHeader('Authorization', 'Bearer ' + this.apiKey);
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.setRequestHeader('User-Agent', 'ServiceNow-SNAS/1.0');
+            
+            // Prepare request body
+            var requestBody = {
+                achievements: this._sanitizeAchievements(params.achievements),
+                context: {
+                    audience: params.context ? params.context.audience : 'general',
+                    include_reasoning: params.context ? params.context.include_reasoning : true,
+                    timestamp: new GlideDateTime().getDisplayValue(),
+                    source: 'servicenow-snas'
+                },
+                options: {
+                    max_results: 50,
+                    confidence_threshold: 0.7,
+                    include_metadata: true
+                }
+            };
+            
+            request.setRequestBody(JSON.stringify(requestBody));
+            
+            var apiStartTime = new GlideDateTime().getNumericValue();
+            var response = request.execute();
+            var responseTime = new GlideDateTime().getNumericValue() - apiStartTime;
+            
+            if (response.getStatusCode() == 200) {
+                var responseBody = response.getBody();
+                var parsedResponse = JSON.parse(responseBody);
+                
+                return {
+                    success: true,
+                    data: parsedResponse,
+                    responseTime: responseTime,
+                    statusCode: response.getStatusCode()
+                };
+            } else {
+                gs.warn('[SNAS] AI API returned status: ' + response.getStatusCode());
+                return {
+                    success: false,
+                    error: 'AI API returned status ' + response.getStatusCode(),
+                    statusCode: response.getStatusCode()
+                };
+            }
+            
+        } catch (e) {
+            gs.error('[SNAS] AI API call failed: ' + e.message);
+            return {
+                success: false,
+                error: e.message
+            };
+        }
+    },
+    
+    /**
+     * Sanitize achievements for API transmission
+     * @param {Array} achievements - Raw achievements
+     * @returns {Array} Sanitized achievements
+     */
+    _sanitizeAchievements: function(achievements) {
+        return achievements.map(function(achievement) {
+            return {
+                id: achievement.id || '',
+                name: achievement.name || '',
+                issuer: achievement.issuer || '',
+                type: achievement.type || '',
+                date_earned: achievement.date_earned || '',
+                description: achievement.description || '',
+                category: achievement.category || '',
+                priority_score: parseInt(achievement.priority_score) || 50
+            };
+        });
+    },
+    
+    /**
+     * Format AI API response to standard format
+     * @param {Object} aiData - AI response data
+     * @param {Object} params - Original parameters
+     * @returns {Object} Formatted response
+     */
+    _formatAIResponse: function(aiData, params) {
+        try {
+            var prioritizedAchievements = aiData.prioritized_achievements || aiData.achievements || [];
+            var confidence = aiData.confidence || 0.75;
+            
+            // Enhance with additional metadata
+            prioritizedAchievements = prioritizedAchievements.map(function(achievement) {
+                if (aiData.reasoning && aiData.reasoning[achievement.id]) {
+                    achievement.ai_reasoning = aiData.reasoning[achievement.id];
+                }
+                if (aiData.scores && aiData.scores[achievement.id]) {
+                    achievement.priority_score = aiData.scores[achievement.id];
+                }
+                return achievement;
+            });
+            
+            return {
+                prioritized_achievements: prioritizedAchievements,
+                confidence: Math.min(0.98, confidence),
+                source: 'ai_api',
+                processing_time: this._getElapsedTime(),
+                metadata: {
+                    audience: params.context ? params.context.audience : 'general',
+                    total_achievements: prioritizedAchievements.length,
+                    ai_version: aiData.version || '1.0',
+                    timestamp: new GlideDateTime().getDisplayValue()
+                }
+            };
+            
+        } catch (e) {
+            gs.error('[SNAS] Error formatting AI response: ' + e.message);
+            return this._getFallbackPrioritization(params);
+        }
+    },
+    
+    /**
+     * Fallback prioritization when AI is unavailable
+     * @param {Object} params - Parameters
+     * @returns {Object} Prioritized achievements
+     */
+    _getFallbackPrioritization: function(params) {
+        try {
+            var achievements = params.achievements || [];
+            var audience = params.context ? params.context.audience : 'general';
+            var includeReasoning = params.context ? params.context.include_reasoning : false;
+            
+            var prioritizedAchievements = achievements.map(function(achievement) {
+                var score = parseInt(achievement.priority_score) || 50;
+                var reasoning = [];
+                
+                // Base scoring algorithm
+                
+                // CSA Certification boost for IT recruiters
+                if (audience === 'it_recruiters' && 
+                    achievement.name && achievement.name.toLowerCase().indexOf('csa') !== -1) {
+                    score += 25;
+                    reasoning.push('CSA certification priority boost for IT recruiters (+25)');
+                }
+                
+                // Recent achievement boost (within 90 days)
+                if (achievement.date_earned) {
+                    var earnedDate = new GlideDate();
+                    earnedDate.setValue(achievement.date_earned);
+                    var daysSince = GlideDate.subtract(new GlideDate(), earnedDate).getDays();
+                    
+                    if (daysSince <= 90) {
+                        score += 20;
+                        reasoning.push('Recent achievement bonus (+20)');
+                    }
+                }
+                
+                // Certification type boost
+                if (achievement.type === 'certification') {
+                    score += 30;
+                    reasoning.push('Certification type priority (+30)');
+                }
+                
+                // ServiceNow platform relevance
+                if (achievement.issuer === 'ServiceNow') {
+                    score += 15;
+                    reasoning.push('ServiceNow platform relevance (+15)');
+                }
+                
+                // Audience-specific boosts
+                switch (audience) {
+                    case 'veteran_community':
+                        if (achievement.category === 'Leadership' || 
+                            achievement.category === 'Community Impact') {
+                            score += 15;
+                            reasoning.push('Veteran leadership relevance (+15)');
+                        }
+                        break;
+                        
+                    case 'servicenow_professionals':
+                        if (achievement.issuer === 'ServiceNow' && 
+                            achievement.type === 'certification') {
+                            score += 10;
+                            reasoning.push('ServiceNow professional certification (+10)');
+                        }
+                        break;
+                }
+                
+                // Cap at 100
+                score = Math.min(100, score);
+                
+                var enhancedAchievement = {
+                    id: achievement.id,
+                    name: achievement.name,
+                    issuer: achievement.issuer,
+                    type: achievement.type,
+                    date_earned: achievement.date_earned,
+                    description: achievement.description,
+                    category: achievement.category,
+                    priority_score: score
+                };
+                
+                if (includeReasoning && reasoning.length > 0) {
+                    enhancedAchievement.ai_reasoning = reasoning.join(', ');
+                }
+                
+                return enhancedAchievement;
+            });
+            
+            // Sort by priority score (descending)
+            prioritizedAchievements.sort(function(a, b) {
+                return (b.priority_score || 0) - (a.priority_score || 0);
+            });
+            
+            return {
+                prioritized_achievements: prioritizedAchievements,
+                confidence: 0.80, // Fallback confidence
+                source: 'fallback_algorithm',
+                processing_time: this._getElapsedTime(),
+                metadata: {
+                    audience: audience,
+                    total_achievements: prioritizedAchievements.length,
+                    algorithm_version: '1.0',
+                    timestamp: new GlideDateTime().getDisplayValue()
+                }
+            };
+            
+        } catch (e) {
+            gs.error('[SNAS] Error in fallback prioritization: ' + e.message);
+            return this._getEmptyResult();
+        }
+    },
+    
+    /**
+     * Get empty result structure
+     * @returns {Object} Empty result
+     */
+    _getEmptyResult: function() {
+        return {
+            prioritized_achievements: [],
+            confidence: 0.0,
+            source: 'empty',
+            processing_time: this._getElapsedTime(),
+            metadata: {
+                total_achievements: 0,
+                timestamp: new GlideDateTime().getDisplayValue()
+            }
+        };
+    },
+    
+    /**
+     * Log API call for monitoring
+     * @param {string} method - Method name
+     * @param {Object} params - Parameters
+     */
+    _logAPICall: function(method, params) {
+        try {
+            var logData = {
+                method: method,
+                audience: params.context ? params.context.audience : 'unknown',
+                achievement_count: params.achievements ? params.achievements.length : 0,
+                timestamp: new GlideDateTime().getDisplayValue(),
+                user: gs.getUserName() || 'anonymous'
+            };
+            
+            gs.info('[SNAS API] ' + method + ' called: ' + JSON.stringify(logData));
+            
+        } catch (e) {
+            // Ignore logging errors
+        }
+    },
+    
+    /**
+     * Log performance metrics
+     * @param {string} status - Status (SUCCESS, ERROR, etc.)
+     * @param {number} responseTime - Response time in ms
+     */
+    _logPerformance: function(status, responseTime) {
+        try {
+            var slaStatus = responseTime <= this.slaTarget ? 'WITHIN_SLA' : 'SLA_EXCEEDED';
+            
+            var perfData = {
+                status: status,
+                response_time: responseTime,
+                sla_target: this.slaTarget,
+                sla_status: slaStatus,
+                timestamp: new GlideDateTime().getDisplayValue()
+            };
+            
+            if (slaStatus === 'SLA_EXCEEDED') {
+                gs.warn('[SNAS Performance] SLA exceeded: ' + JSON.stringify(perfData));
+            } else {
+                gs.info('[SNAS Performance] ' + JSON.stringify(perfData));
+            }
+            
+        } catch (e) {
+            // Ignore logging errors
+        }
+    },
+    
+    /**
+     * Get elapsed time since initialization
+     * @returns {number} Elapsed time in milliseconds
+     */
+    _getElapsedTime: function() {
+        return new GlideDateTime().getNumericValue() - this.startTime;
+    },
+    
+    /**
+     * Generate content suggestions for achievements
+     * @param {Object} params - Parameters
+     * @returns {Object} Content suggestions
+     */
+    generateContent: function(params) {
+        try {
+            // This would integrate with AI for content generation
+            // For now, return template-based suggestions
+            
+            var achievement = params.achievement;
+            var contentType = params.content_type || 'linkedin_post';
+            
+            var suggestions = {
+                linkedin_post: this._generateLinkedInPost(achievement),
+                professional_summary: this._generateProfessionalSummary(achievement),
+                badge_description: this._generateBadgeDescription(achievement)
+            };
+            
+            return {
+                suggestions: suggestions,
+                confidence: 0.85,
+                source: 'template_based',
+                timestamp: new GlideDateTime().getDisplayValue()
+            };
+            
+        } catch (e) {
+            gs.error('[SNAS] Error generating content: ' + e.message);
+            return {
+                suggestions: {},
+                confidence: 0.0,
+                error: e.message
+            };
+        }
+    },
+    
+    /**
+     * Generate LinkedIn post template
+     * @param {Object} achievement - Achievement object
+     * @returns {string} LinkedIn post text
+     */
+    _generateLinkedInPost: function(achievement) {
+        var templates = [
+            "🎖️ Proud to announce I've earned the {name} from {issuer}! This certification demonstrates my commitment to {category} excellence and continuous learning in the ServiceNow ecosystem. #ServiceNow #Certification #VeteranInTech #ServiceToSuccess",
+            "🚀 Just completed my {name} certification! Grateful for the opportunity to expand my expertise in {category} and contribute to delivering exceptional ServiceNow solutions. #ProfessionalDevelopment #ServiceNow #MilitaryToTech",
+            "✅ Achievement unlocked: {name}! This {type} from {issuer} reinforces my dedication to mastering {category} and serving excellence in technology. Onward and upward! #Achievement #ServiceNow #VeteranExcellence"
+        ];
+        
+        var template = templates[Math.floor(Math.random() * templates.length)];
+        
+        return template
+            .replace(/\{name\}/g, achievement.name || 'Achievement')
+            .replace(/\{issuer\}/g, achievement.issuer || 'Organization')
+            .replace(/\{category\}/g, achievement.category || 'Professional')
+            .replace(/\{type\}/g, achievement.type || 'credential');
+    },
+    
+    /**
+     * Generate professional summary
+     * @param {Object} achievement - Achievement object
+     * @returns {string} Professional summary
+     */
+    _generateProfessionalSummary: function(achievement) {
+        return "Certified " + (achievement.category || "professional") + 
+               " with " + (achievement.name || "advanced certification") + 
+               " from " + (achievement.issuer || "leading organization") + 
+               ". Demonstrated expertise in " + (achievement.category || "technology solutions") +
+               " with focus on delivering exceptional results and continuous improvement.";
+    },
+    
+    /**
+     * Generate badge description
+     * @param {Object} achievement - Achievement object
+     * @returns {string} Badge description
+     */
+    _generateBadgeDescription: function(achievement) {
+        return "This " + (achievement.type || "credential") + 
+               " validates proficiency in " + (achievement.category || "professional skills") +
+               " and represents commitment to excellence in " + (achievement.issuer || "the field") +
+               " standards and best practices.";
+    },
+    
+    type: 'AchievementAPI'
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>b2c3d4e5f6789012345678901234567890ab</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>AchievementAPI</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_script_include_b2c3d4e5f6789012345678901234567890ab</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+    </sys_script_include>
+</unload></content>

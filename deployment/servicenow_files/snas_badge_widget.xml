@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-03 18:30:00">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <category>custom</category>
+        <client_script><![CDATA[
+(function() {
+    'use strict';
+    
+    var c = this;
+    
+    // Initialize widget
+    c.$onInit = function() {
+        c.loading = true;
+        c.badges = [];
+        c.audience = c.options.default_audience || 'all';
+        
+        // Load initial data
+        c.server.get({
+            action: 'getBadges',
+            audience: c.audience
+        }).then(function(response) {
+            c.badges = response.data.badges || [];
+            c.loading = false;
+        }).catch(function(error) {
+            console.error('Error loading badges:', error);
+            c.loading = false;
+            spUtil.addErrorMessage('Failed to load achievements');
+        });
+    };
+    
+    // Prioritize badges using AI
+    c.prioritizeBadges = function() {
+        if (c.loading) return;
+        
+        c.loading = true;
+        
+        c.server.get({
+            action: 'prioritizeBadges',
+            audience: c.audience,
+            badges: c.badges
+        }).then(function(response) {
+            c.badges = response.data.prioritizedBadges || [];
+            c.aiConfidence = response.data.confidence || 0.75;
+            c.loading = false;
+            
+            // Show success message
+            spUtil.addInfoMessage('AI prioritization completed for ' + c.getAudienceLabel(c.audience) + ' audience');
+        }).catch(function(error) {
+            console.error('Error prioritizing badges:', error);
+            spUtil.addErrorMessage('Failed to prioritize badges: ' + (error.message || 'Unknown error'));
+            c.loading = false;
+        });
+    };
+    
+    // Filter badges by audience
+    c.onAudienceChange = function() {
+        if (c.badges.length > 0) {
+            c.prioritizeBadges();
+        }
+    };
+    
+    // Get priority class for display
+    c.getPriorityClass = function(score) {
+        if (score >= 90) return 'high';
+        if (score >= 70) return 'medium';
+        return 'low';
+    };
+    
+    // Format date for display
+    c.formatDate = function(dateString) {
+        if (!dateString) return '';
+        return new Date(dateString).toLocaleDateString();
+    };
+    
+    // Get audience label
+    c.getAudienceLabel = function(audience) {
+        var labels = {
+            'all': 'All Audiences',
+            'it_recruiters': 'IT Recruiters',
+            'veteran_community': 'Veteran Community',
+            'servicenow_professionals': 'ServiceNow Professionals'
+        };
+        return labels[audience] || audience;
+    };
+    
+    // Show badge details
+    c.showBadgeDetails = function(badge) {
+        var message = 'Achievement Details:\n\n' +
+                     'Name: ' + badge.name + '\n' +
+                     'Issuer: ' + badge.issuer + '\n' +
+                     'Type: ' + badge.type + '\n' +
+                     'Date Earned: ' + c.formatDate(badge.date_earned) + '\n' +
+                     'Priority Score: ' + badge.priority_score + '\n' +
+                     'Category: ' + badge.category;
+        
+        if (badge.ai_reasoning) {
+            message += '\n\nAI Reasoning: ' + badge.ai_reasoning;
+        }
+        
+        spModal.alert(message);
+    };
+})();
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css><![CDATA[
+.snas-badge-widget {
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1B365D;
+}
+
+.widget-header h3 {
+    color: #1B365D;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.widget-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    min-height: 200px;
+}
+
+.badge-card {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: #fff;
+    cursor: pointer;
+}
+
+.badge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.badge-header {
+    background: linear-gradient(135deg, #1B365D, #2c5282);
+    color: white;
+    padding: 10px;
+    position: relative;
+}
+
+.priority-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #FFD700;
+}
+
+.priority-indicator.medium {
+    background: #ffc107;
+}
+
+.priority-indicator.low {
+    background: #6c757d;
+}
+
+.badge-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.badge-issuer {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.badge-body {
+    padding: 10px;
+}
+
+.badge-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.badge-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+    font-size: 0.8rem;
+}
+
+.priority-score {
+    background: #FFD700;
+    color: #1B365D;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.loading-spinner {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.ai-insights {
+    background: #f8f9ff;
+    border: 1px solid #e3e6ff;
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 8px;
+    font-size: 0.8rem;
+}
+
+.ai-insights h5 {
+    color: #1B365D;
+    margin: 0 0 4px 0;
+    font-size: 0.8rem;
+}
+
+.confidence-display {
+    background: #f8f9fa;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+}
+
+.confidence-label {
+    font-size: 0.85rem;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.confidence-bar {
+    background: #e9ecef;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1B365D, #FFD700);
+    transition: width 0.5s ease;
+}
+
+.confidence-text {
+    text-align: center;
+    font-weight: bold;
+    color: #1B365D;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .widget-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .widget-controls {
+        justify-content: center;
+    }
+    
+    .badges-grid {
+        grid-template-columns: 1fr;
+    }
+}
+]]></css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>AI-enhanced badge display widget for SNAS portfolio showcasing ServiceNow achievements with context-aware prioritization for veteran professionals</description>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>snas_badge_display</id>
+        <internal>false</internal>
+        <link/>
+        <name>SNAS Badge Display</name>
+        <option_schema>[
+    {
+        "name": "title",
+        "default_value": "🎖️ Achievement Badges",
+        "label": "Widget Title",
+        "type": "string"
+    },
+    {
+        "name": "max_badges",
+        "default_value": "10",
+        "label": "Maximum Badges to Display",
+        "type": "integer"
+    },
+    {
+        "name": "show_ai_insights",
+        "default_value": "true",
+        "label": "Show AI Insights",
+        "type": "boolean"
+    },
+    {
+        "name": "default_audience",
+        "default_value": "it_recruiters",
+        "label": "Default Target Audience",
+        "type": "choice",
+        "choices": [
+            {"label": "All Audiences", "value": "all"},
+            {"label": "IT Recruiters", "value": "it_recruiters"},
+            {"label": "Veteran Community", "value": "veteran_community"},
+            {"label": "ServiceNow Professionals", "value": "servicenow_professionals"}
+        ]
+    },
+    {
+        "name": "enable_details",
+        "default_value": "true",
+        "label": "Enable Click for Details",
+        "type": "boolean"
+    }
+]</option_schema>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[
+(function() {
+    'use strict';
+    
+    // Handle client requests
+    if (input && input.action) {
+        switch (input.action) {
+            case 'getBadges':
+                data.badges = getBadges(input.audience || 'all');
+                break;
+                
+            case 'prioritizeBadges':
+                var result = prioritizeBadges(input.badges || [], input.audience || 'all');
+                data.prioritizedBadges = result.badges;
+                data.confidence = result.confidence;
+                break;
+        }
+    }
+    
+    // Initialize widget options
+    data.title = options.title || "🎖️ Achievement Badges";
+    data.maxBadges = parseInt(options.max_badges) || 10;
+    data.showAIInsights = (options.show_ai_insights === 'true');
+    data.defaultAudience = options.default_audience || 'it_recruiters';
+    data.enableDetails = (options.enable_details === 'true');
+    
+    function getBadges(audience) {
+        var badges = [];
+        
+        try {
+            // Query achievement table
+            var gr = new GlideRecord('x_snc_snas_port_achievement');
+            gr.addActiveQuery();
+            gr.orderByDesc('date_earned');
+            if (data.maxBadges > 0) {
+                gr.setLimit(data.maxBadges);
+            }
+            gr.query();
+            
+            while (gr.next()) {
+                var badge = {
+                    id: gr.getUniqueValue(),
+                    name: gr.getValue('name') || '',
+                    issuer: gr.getValue('issuer') || '',
+                    type: gr.getValue('type') || '',
+                    date_earned: gr.getValue('date_earned') || '',
+                    description: gr.getValue('description') || '',
+                    category: gr.getValue('category') || '',
+                    priority_score: parseInt(gr.getValue('priority_score')) || 50
+                };
+                
+                if (data.showAIInsights && gr.getValue('ai_reasoning')) {
+                    badge.ai_reasoning = gr.getValue('ai_reasoning');
+                }
+                
+                badges.push(badge);
+            }
+            
+            // Apply audience-specific filtering if needed
+            if (audience !== 'all') {
+                badges = filterByAudience(badges, audience);
+            }
+            
+        } catch (e) {
+            gs.error('[SNAS] Error loading badges: ' + e.message);
+            // Return sample data as fallback
+            badges = getSampleBadges();
+        }
+        
+        return badges;
+    }
+    
+    function prioritizeBadges(badges, audience) {
+        try {
+            // Try to use AI API if available
+            var AchievementAPI = new global.AchievementAPI();
+            if (AchievementAPI) {
+                var prioritizationResult = AchievementAPI.prioritizeAchievements({
+                    achievements: badges,
+                    context: {
+                        audience: audience,
+                        include_reasoning: data.showAIInsights
+                    }
+                });
+                
+                return {
+                    badges: prioritizationResult.prioritized_achievements || badges,
+                    confidence: prioritizationResult.confidence || 0.75
+                };
+            }
+            
+        } catch (e) {
+            gs.warn('[SNAS] AI API unavailable, using fallback prioritization: ' + e.message);
+        }
+        
+        // Fallback prioritization logic
+        return getFallbackPrioritization(badges, audience);
+    }
+    
+    function getFallbackPrioritization(badges, audience) {
+        var prioritizedBadges = badges.map(function(badge) {
+            var score = badge.priority_score || 50;
+            var reasoning = [];
+            
+            // Audience-specific boosts
+            switch (audience) {
+                case 'it_recruiters':
+                    if (badge.name.toLowerCase().indexOf('csa') !== -1) {
+                        score += 25;
+                        reasoning.push('CSA certification priority for IT recruiters (+25)');
+                    }
+                    if (badge.type === 'certification') {
+                        score += 15;
+                        reasoning.push('Certification type boost (+15)');
+                    }
+                    break;
+                    
+                case 'veteran_community':
+                    if (badge.category === 'Leadership' || badge.category === 'Community Impact') {
+                        score += 20;
+                        reasoning.push('Veteran leadership relevance (+20)');
+                    }
+                    break;
+                    
+                case 'servicenow_professionals':
+                    if (badge.issuer === 'ServiceNow') {
+                        score += 15;
+                        reasoning.push('ServiceNow platform relevance (+15)');
+                    }
+                    break;
+            }
+            
+            // Recency boost
+            if (badge.date_earned) {
+                var earnedDate = new Date(badge.date_earned);
+                var daysSince = (new Date() - earnedDate) / (1000 * 60 * 60 * 24);
+                if (daysSince <= 90) {
+                    score += 20;
+                    reasoning.push('Recent achievement boost (+20)');
+                }
+            }
+            
+            badge.priority_score = Math.min(100, score);
+            if (data.showAIInsights && reasoning.length > 0) {
+                badge.ai_reasoning = reasoning.join(', ');
+            }
+            
+            return badge;
+        });
+        
+        // Sort by priority score
+        prioritizedBadges.sort(function(a, b) {
+            return (b.priority_score || 50) - (a.priority_score || 50);
+        });
+        
+        return {
+            badges: prioritizedBadges,
+            confidence: 0.80
+        };
+    }
+    
+    function filterByAudience(badges, audience) {
+        switch (audience) {
+            case 'it_recruiters':
+                return badges.filter(function(badge) {
+                    return badge.type === 'certification' || 
+                           badge.name.toLowerCase().indexOf('csa') !== -1 ||
+                           badge.category === 'Platform Administration';
+                });
+                
+            case 'veteran_community':
+                return badges.filter(function(badge) {
+                    return badge.category === 'Leadership' || 
+                           badge.category === 'Community Impact' ||
+                           badge.issuer === 'U.S. Navy' ||
+                           badge.issuer === 'U.S. Military';
+                });
+                
+            case 'servicenow_professionals':
+                return badges.filter(function(badge) {
+                    return badge.issuer === 'ServiceNow';
+                });
+                
+            default:
+                return badges;
+        }
+    }
+    
+    function getSampleBadges() {
+        return [
+            {
+                id: 'sample-csa',
+                name: 'Certified System Administrator (CSA)',
+                issuer: 'ServiceNow',
+                type: 'certification',
+                date_earned: '2024-08-15',
+                description: 'Comprehensive ServiceNow platform administration certification demonstrating expertise in system configuration, user management, and platform maintenance.',
+                category: 'Platform Administration',
+                priority_score: 95
+            },
+            {
+                id: 'sample-itsm',
+                name: 'Certified Implementation Specialist - ITSM',
+                issuer: 'ServiceNow',
+                type: 'certification',
+                date_earned: '2024-07-22',
+                description: 'Advanced ITSM implementation certification covering incident, problem, change, and service catalog management.',
+                category: 'ITSM Implementation',
+                priority_score: 88
+            },
+            {
+                id: 'sample-riseup',
+                name: 'RiseUp Achievement Badge',
+                issuer: 'ServiceNow',
+                type: 'achievement',
+                date_earned: '2024-09-10',
+                description: 'Recognition for outstanding contribution to diversity and inclusion in technology through mentorship and community involvement.',
+                category: 'Community Impact',
+                priority_score: 82
+            }
+        ];
+    }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>a1b2c3d4e5f6789012345678901234567890</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SNAS Badge Display</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sp_widget_a1b2c3d4e5f6789012345678901234567890</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <template><![CDATA[
+<div class="snas-badge-widget">
+    <div class="widget-header">
+        <h3>{{::data.title}}</h3>
+        <div class="widget-controls">
+            <select ng-model="c.audience" 
+                    ng-change="c.onAudienceChange()" 
+                    class="form-control"
+                    style="width: 200px;">
+                <option value="all">All Audiences</option>
+                <option value="it_recruiters">IT Recruiters</option>
+                <option value="veteran_community">Veteran Community</option>
+                <option value="servicenow_professionals">ServiceNow Professionals</option>
+            </select>
+            <button class="btn btn-primary btn-sm" 
+                    ng-click="c.prioritizeBadges()"
+                    ng-disabled="c.loading">
+                <i class="fa fa-magic" ng-hide="c.loading"></i>
+                <i class="fa fa-spinner fa-spin" ng-show="c.loading"></i>
+                AI Prioritize
+            </button>
+        </div>
+    </div>
+    
+    <div class="badges-grid">
+        <!-- Loading State -->
+        <div ng-show="c.loading" class="loading-spinner">
+            <i class="fa fa-spinner fa-spin fa-2x"></i>
+            <p>Loading achievements...</p>
+        </div>
+        
+        <!-- Badge Cards -->
+        <div ng-repeat="badge in c.badges" 
+             class="badge-card"
+             ng-click="data.enableDetails && c.showBadgeDetails(badge)">
+            <div class="badge-header">
+                <div class="priority-indicator {{c.getPriorityClass(badge.priority_score)}}"></div>
+                <div class="badge-title">{{badge.name}}</div>
+                <div class="badge-issuer">{{badge.issuer}}</div>
+            </div>
+            <div class="badge-body">
+                <div class="badge-description">{{badge.description}}</div>
+                <div ng-if="badge.ai_reasoning && data.showAIInsights" class="ai-insights">
+                    <h5>🤖 AI Insights</h5>
+                    <p>{{badge.ai_reasoning}}</p>
+                </div>
+                <div class="badge-meta">
+                    <span>Earned: {{c.formatDate(badge.date_earned)}}</span>
+                    <span class="priority-score">{{badge.priority_score}}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- No Results State -->
+        <div ng-show="!c.loading && c.badges.length === 0" class="loading-spinner">
+            <i class="fa fa-info-circle fa-2x"></i>
+            <p>No achievements found for the selected criteria.</p>
+        </div>
+    </div>
+    
+    <!-- AI Confidence Display -->
+    <div ng-if="c.aiConfidence && data.showAIInsights" class="confidence-display">
+        <div class="confidence-label">AI Confidence Level:</div>
+        <div class="confidence-bar">
+            <div class="confidence-fill" ng-style="{'width': (c.aiConfidence * 100) + '%'}"></div>
+        </div>
+        <div class="confidence-text">{{(c.aiConfidence * 100) | number:0}}%</div>
+    </div>
+</div>
+]]></template>
+        <type>widget</type>
+    </sp_widget>
+</unload></content>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unload unload_date="2024-10-03 18:30:00">
+    <!-- AI API Key Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>Encrypted API key for Manus.ai integration for achievement prioritization</description>
+        <name>x_snc_snas_port.ai_api_key</name>
+        <read_roles/>
+        <suffix>ai_api_key</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>l23456789012345678901234567890abc1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.ai_api_key</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_l23456789012345678901234567890abc1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>password</type>
+        <value/>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+    
+    <!-- AI API Endpoint Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>AI API endpoint URL for Manus.ai service integration</description>
+        <name>x_snc_snas_port.ai_endpoint</name>
+        <read_roles/>
+        <suffix>ai_endpoint</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>m34567890123456789012345678901abc2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.ai_endpoint</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_m34567890123456789012345678901abc2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>string</type>
+        <value>https://api.manus.ai/v1/</value>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+    
+    <!-- AI API Timeout Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>Timeout in milliseconds for AI API calls (default: 30000ms)</description>
+        <name>x_snc_snas_port.ai_timeout</name>
+        <read_roles/>
+        <suffix>ai_timeout</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>n45678901234567890123456789012abc3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.ai_timeout</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_n45678901234567890123456789012abc3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>integer</type>
+        <value>30000</value>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+    
+    <!-- Performance SLA Target Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>Performance SLA target in milliseconds for AI operations (default: 2000ms)</description>
+        <name>x_snc_snas_port.performance_sla</name>
+        <read_roles/>
+        <suffix>performance_sla</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>o56789012345678901234567890123abc4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.performance_sla</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_o56789012345678901234567890123abc4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>integer</type>
+        <value>2000</value>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+    
+    <!-- Widget Default Audience Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>Default audience for badge display widget (it_recruiters, veteran_community, servicenow_professionals, all)</description>
+        <name>x_snc_snas_port.default_audience</name>
+        <read_roles/>
+        <suffix>default_audience</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>p67890123456789012345678901234abc5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.default_audience</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_p67890123456789012345678901234abc5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>string</type>
+        <value>it_recruiters</value>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+    
+    <!-- Enable AI Features Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>Enable or disable AI-powered features (true/false)</description>
+        <name>x_snc_snas_port.enable_ai</name>
+        <read_roles/>
+        <suffix>enable_ai</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>q78901234567890123456789012345abc6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.enable_ai</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_q78901234567890123456789012345abc6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>true_false</type>
+        <value>true</value>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+    
+    <!-- Debug Mode Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>Enable debug logging for SNAS operations (true/false)</description>
+        <name>x_snc_snas_port.debug_mode</name>
+        <read_roles/>
+        <suffix>debug_mode</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>r89012345678901234567890123456abc7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.debug_mode</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_r89012345678901234567890123456abc7</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>true_false</type>
+        <value>false</value>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+    
+    <!-- Maximum Badge Display Property -->
+    <sys_properties action="INSERT_OR_UPDATE">
+        <category>SNAS Configuration</category>
+        <description>Maximum number of badges to display per widget (default: 25)</description>
+        <name>x_snc_snas_port.max_badge_display</name>
+        <read_roles/>
+        <suffix>max_badge_display</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-10-03 18:30:00</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>s90123456789012345678901234567abc8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_snas_port.max_badge_display</sys_name>
+        <sys_package/>
+        <sys_policy/>
+        <sys_scope>x_snc_snas_port</sys_scope>
+        <sys_update_name>sys_properties_s90123456789012345678901234567abc8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-10-03 18:30:00</sys_updated_on>
+        <type>integer</type>
+        <value>25</value>
+        <write_roles>x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</unload></content>
