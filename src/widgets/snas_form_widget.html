@@ -1,0 +1,725 @@
+<!-- SNAS Form Widget - AI Prioritization Controls -->
+<div class="snas-form-widget">
+    <div class="widget-header">
+        <h3>🤖 AI Prioritization Controls</h3>
+        <div class="header-status">
+            <span class="status-indicator" id="aiStatus">Ready</span>
+        </div>
+    </div>
+    
+    <form class="ai-control-form" id="aiControlForm">
+        <div class="form-section">
+            <h4>🎯 Target Audience</h4>
+            <div class="form-group">
+                <label for="audienceSelect">Select your target audience to optimize badge prioritization:</label>
+                <select id="audienceSelect" name="audience" class="form-control" required>
+                    <option value="">Choose audience...</option>
+                    <option value="it_recruiters">IT Recruiters & Hiring Managers</option>
+                    <option value="veteran_community">Veteran Community & Mentors</option>
+                    <option value="servicenow_professionals">ServiceNow Professionals</option>
+                    <option value="technical_peers">Technical Peers & Colleagues</option>
+                    <option value="general_public">General Professional Network</option>
+                </select>
+                <small class="form-text text-muted">
+                    Different audiences value different types of achievements
+                </small>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h4>📋 Content Preferences</h4>
+            <div class="form-group">
+                <label for="contentType">Focus on specific achievement types:</label>
+                <select id="contentType" name="content_type" class="form-control">
+                    <option value="all">All Achievements</option>
+                    <option value="certifications">Certifications Only</option>
+                    <option value="recent">Recent Achievements (90 days)</option>
+                    <option value="servicenow">ServiceNow Platform Focus</option>
+                    <option value="leadership">Leadership & Military</option>
+                    <option value="technical">Technical Skills</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Achievement Categories (select multiple):</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cat_platform" name="categories" value="platform" checked>
+                        <label for="cat_platform">Platform Administration</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cat_development" name="categories" value="development" checked>
+                        <label for="cat_development">Development</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cat_itsm" name="categories" value="itsm" checked>
+                        <label for="cat_itsm">ITSM</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cat_leadership" name="categories" value="leadership" checked>
+                        <label for="cat_leadership">Leadership</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cat_community" name="categories" value="community" checked>
+                        <label for="cat_community">Community Impact</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cat_military" name="categories" value="military" checked>
+                        <label for="cat_military">Military Service</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h4>⚙️ AI Parameters</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="priorityWeight">Priority Weight:</label>
+                        <input type="range" id="priorityWeight" name="priority_weight" 
+                               min="0" max="100" value="75" class="form-control-range">
+                        <div class="range-labels">
+                            <span>Conservative</span>
+                            <span id="priorityValue">75%</span>
+                            <span>Aggressive</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="recentnessBoost">Recency Boost:</label>
+                        <input type="range" id="recentnessBoost" name="recency_boost" 
+                               min="0" max="50" value="20" class="form-control-range">
+                        <div class="range-labels">
+                            <span>None</span>
+                            <span id="recentValue">20pts</span>
+                            <span>Maximum</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="customPrompt">Custom AI Instructions (optional):</label>
+                <textarea id="customPrompt" name="custom_prompt" class="form-control" 
+                          rows="3" placeholder="Add specific instructions for AI prioritization..."></textarea>
+                <small class="form-text text-muted">
+                    Example: "Emphasize ServiceNow certifications for technical roles" or "Highlight leadership experience for management positions"
+                </small>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h4>🎨 Display Options</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="maxResults">Maximum Results:</label>
+                        <select id="maxResults" name="max_results" class="form-control">
+                            <option value="5">Top 5</option>
+                            <option value="10" selected>Top 10</option>
+                            <option value="15">Top 15</option>
+                            <option value="20">Top 20</option>
+                            <option value="all">Show All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="sortOrder">Sort Order:</label>
+                        <select id="sortOrder" name="sort_order" class="form-control">
+                            <option value="priority_desc" selected>Priority (High to Low)</option>
+                            <option value="priority_asc">Priority (Low to High)</option>
+                            <option value="date_desc">Date (Newest First)</option>
+                            <option value="date_asc">Date (Oldest First)</option>
+                            <option value="name_asc">Name (A to Z)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="showInsights" name="show_insights" checked>
+                    <label for="showInsights">Show AI Insights & Reasoning</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="enableAutoRefresh" name="auto_refresh">
+                    <label for="enableAutoRefresh">Auto-refresh every 5 minutes</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary btn-lg" id="prioritizeBtn">
+                    <i class="fa fa-magic"></i>
+                    AI Prioritize Badges
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    <i class="fa fa-refresh"></i>
+                    Reset to Defaults
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="savePreset()">
+                    <i class="fa fa-save"></i>
+                    Save Preset
+                </button>
+            </div>
+            
+            <div class="confidence-display" id="confidenceDisplay" style="display: none;">
+                <div class="confidence-label">AI Confidence Level:</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidenceFill"></div>
+                </div>
+                <div class="confidence-text" id="confidenceText">0%</div>
+            </div>
+        </div>
+    </form>
+    
+    <div class="preset-section" id="presetSection">
+        <h4>📱 Quick Presets</h4>
+        <div class="preset-buttons">
+            <button class="btn btn-outline-primary btn-sm" onclick="loadPreset('recruiter')">
+                IT Recruiter Focus
+            </button>
+            <button class="btn btn-outline-primary btn-sm" onclick="loadPreset('veteran')">
+                Veteran Community
+            </button>
+            <button class="btn btn-outline-primary btn-sm" onclick="loadPreset('technical')">
+                Technical Peer Review
+            </button>
+            <button class="btn btn-outline-primary btn-sm" onclick="loadPreset('balanced')">
+                Balanced View
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.snas-form-widget {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.widget-header {
+    background: linear-gradient(135deg, #1B365D, #2c5282);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.status-indicator {
+    padding: 4px 12px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-indicator.processing {
+    background: #ffc107;
+    color: #212529;
+    animation: pulse 1s infinite;
+}
+
+.ai-control-form {
+    padding: 20px;
+}
+
+.form-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.form-section h4 {
+    color: #1B365D;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #1B365D;
+    box-shadow: 0 0 0 0.2rem rgba(27, 54, 93, 0.25);
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+.checkbox-item label {
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.form-control-range {
+    width: 100%;
+    padding: 0;
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.range-labels span:nth-child(2) {
+    font-weight: bold;
+    color: #1B365D;
+}
+
+.row {
+    display: flex;
+    margin: 0 -10px;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+    padding: 0 10px;
+}
+
+.form-actions {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: #1B365D;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2c5282;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-outline-primary {
+    border: 1px solid #1B365D;
+    color: #1B365D;
+    background: white;
+}
+
+.btn-outline-primary:hover {
+    background: #1B365D;
+    color: white;
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 1rem;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.confidence-display {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.confidence-label {
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.confidence-bar {
+    background: #e9ecef;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1B365D, #FFD700);
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.confidence-text {
+    text-align: center;
+    font-weight: bold;
+    color: #1B365D;
+}
+
+.preset-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.preset-section h4 {
+    color: #1B365D;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.preset-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+    }
+    
+    .col-md-6 {
+        flex: 1;
+        margin-bottom: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .preset-buttons {
+        flex-direction: column;
+    }
+    
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+    
+    // Initialize form
+    function initForm() {
+        setupRangeUpdates();
+        setupFormValidation();
+        setupEventListeners();
+        loadDefaultPreset();
+    }
+    
+    function setupRangeUpdates() {
+        const priorityWeight = document.getElementById('priorityWeight');
+        const recentnessBoost = document.getElementById('recentnessBoost');
+        const priorityValue = document.getElementById('priorityValue');
+        const recentValue = document.getElementById('recentValue');
+        
+        if (priorityWeight && priorityValue) {
+            priorityWeight.addEventListener('input', function() {
+                priorityValue.textContent = this.value + '%';
+            });
+        }
+        
+        if (recentnessBoost && recentValue) {
+            recentnessBoost.addEventListener('input', function() {
+                recentValue.textContent = this.value + 'pts';
+            });
+        }
+    }
+    
+    function setupFormValidation() {
+        const form = document.getElementById('aiControlForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                processAIPrioritization();
+            });
+        }
+    }
+    
+    function setupEventListeners() {
+        // Auto-update confidence when parameters change
+        document.querySelectorAll('select, input[type="range"], input[type="checkbox"]').forEach(input => {
+            input.addEventListener('change', updateConfidenceEstimate);
+        });
+    }
+    
+    function processAIPrioritization() {
+        const form = document.getElementById('aiControlForm');
+        const formData = new FormData(form);
+        const statusIndicator = document.getElementById('aiStatus');
+        const prioritizeBtn = document.getElementById('prioritizeBtn');
+        
+        // Validation
+        if (!formData.get('audience')) {
+            alert('Please select a target audience');
+            return;
+        }
+        
+        // Update UI to show processing
+        statusIndicator.textContent = 'Processing...';
+        statusIndicator.className = 'status-indicator processing';
+        prioritizeBtn.disabled = true;
+        prioritizeBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+        
+        // Simulate AI processing
+        setTimeout(() => {
+            // Show results
+            const confidence = calculateConfidence(formData);
+            showResults(formData, confidence);
+            
+            // Reset UI
+            statusIndicator.textContent = 'Complete';
+            statusIndicator.className = 'status-indicator';
+            prioritizeBtn.disabled = false;
+            prioritizeBtn.innerHTML = '<i class="fa fa-magic"></i> AI Prioritize Badges';
+            
+            setTimeout(() => {
+                statusIndicator.textContent = 'Ready';
+            }, 3000);
+            
+        }, 2000);
+    }
+    
+    function calculateConfidence(formData) {
+        let confidence = 0.75; // Base confidence
+        
+        // Boost confidence based on selections
+        if (formData.get('audience')) confidence += 0.1;
+        if (formData.get('content_type') !== 'all') confidence += 0.05;
+        if (formData.getAll('categories').length >= 3) confidence += 0.05;
+        if (formData.get('custom_prompt')) confidence += 0.05;
+        
+        return Math.min(0.98, confidence);
+    }
+    
+    function showResults(formData, confidence) {
+        const confidenceDisplay = document.getElementById('confidenceDisplay');
+        const confidenceFill = document.getElementById('confidenceFill');
+        const confidenceText = document.getElementById('confidenceText');
+        
+        confidenceDisplay.style.display = 'block';
+        confidenceFill.style.width = (confidence * 100) + '%';
+        confidenceText.textContent = Math.round(confidence * 100) + '%';
+        
+        // In real implementation, this would trigger the badge display update
+        console.log('AI Prioritization Results:', {
+            audience: formData.get('audience'),
+            contentType: formData.get('content_type'),
+            categories: formData.getAll('categories'),
+            priorityWeight: formData.get('priority_weight'),
+            recencyBoost: formData.get('recency_boost'),
+            maxResults: formData.get('max_results'),
+            confidence: confidence
+        });
+        
+        showFeedback('AI prioritization completed successfully!', 'success');
+    }
+    
+    function updateConfidenceEstimate() {
+        const form = document.getElementById('aiControlForm');
+        const formData = new FormData(form);
+        const confidence = calculateConfidence(formData);
+        
+        // Update confidence display if visible
+        const confidenceDisplay = document.getElementById('confidenceDisplay');
+        if (confidenceDisplay.style.display === 'block') {
+            const confidenceFill = document.getElementById('confidenceFill');
+            const confidenceText = document.getElementById('confidenceText');
+            
+            confidenceFill.style.width = (confidence * 100) + '%';
+            confidenceText.textContent = Math.round(confidence * 100) + '%';
+        }
+    }
+    
+    // Global functions
+    window.resetForm = function() {
+        document.getElementById('aiControlForm').reset();
+        document.getElementById('priorityValue').textContent = '75%';
+        document.getElementById('recentValue').textContent = '20pts';
+        document.getElementById('confidenceDisplay').style.display = 'none';
+        showFeedback('Form reset to defaults', 'info');
+    };
+    
+    window.savePreset = function() {
+        const form = document.getElementById('aiControlForm');
+        const formData = new FormData(form);
+        
+        // In real ServiceNow implementation, this would save to user preferences
+        const presetName = prompt('Enter a name for this preset:');
+        if (presetName) {
+            console.log('Saving preset:', presetName, Object.fromEntries(formData));
+            showFeedback(`Preset "${presetName}" saved successfully!`, 'success');
+        }
+    };
+    
+    window.loadPreset = function(presetType) {
+        const presets = {
+            recruiter: {
+                audience: 'it_recruiters',
+                content_type: 'certifications',
+                priority_weight: 85,
+                recency_boost: 30,
+                max_results: 10
+            },
+            veteran: {
+                audience: 'veteran_community',
+                content_type: 'leadership',
+                priority_weight: 70,
+                recency_boost: 15,
+                max_results: 15
+            },
+            technical: {
+                audience: 'servicenow_professionals',
+                content_type: 'servicenow',
+                priority_weight: 80,
+                recency_boost: 25,
+                max_results: 10
+            },
+            balanced: {
+                audience: 'general_public',
+                content_type: 'all',
+                priority_weight: 75,
+                recency_boost: 20,
+                max_results: 10
+            }
+        };
+        
+        const preset = presets[presetType];
+        if (preset) {
+            Object.entries(preset).forEach(([key, value]) => {
+                const element = document.getElementsByName(key)[0];
+                if (element) {
+                    element.value = value;
+                    // Trigger change events for range inputs
+                    if (element.type === 'range') {
+                        element.dispatchEvent(new Event('input'));
+                    }
+                }
+            });
+            
+            showFeedback(`Loaded ${presetType} preset`, 'info');
+        }
+    };
+    
+    function loadDefaultPreset() {
+        // Load a balanced preset by default
+        window.loadPreset('balanced');
+    }
+    
+    function showFeedback(message, type) {
+        const feedback = document.createElement('div');
+        feedback.className = `alert alert-${type === 'success' ? 'success' : 'info'}`;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 15px;
+            border-radius: 4px;
+            background: ${type === 'success' ? '#d4edda' : '#d1ecf1'};
+            color: ${type === 'success' ? '#155724' : '#0c5460'};
+            border: 1px solid ${type === 'success' ? '#c3e6cb' : '#bee5eb'};
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        `;
+        feedback.textContent = message;
+        
+        document.body.appendChild(feedback);
+        
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initForm);
+    } else {
+        initForm();
+    }
+})();
+</script>

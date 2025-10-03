@@ -1,0 +1,287 @@
+<!-- SNAS Badge Display Widget -->
+<div class="snas-badge-widget">
+    <div class="widget-header">
+        <h3>🎖️ Achievement Badges</h3>
+        <div class="widget-controls">
+            <select id="audience-filter" class="form-control">
+                <option value="all">All Audiences</option>
+                <option value="it_recruiters">IT Recruiters</option>
+                <option value="veteran_community">Veteran Community</option>
+                <option value="servicenow_professionals">ServiceNow Professionals</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="prioritizeBadges()">
+                AI Prioritize
+            </button>
+        </div>
+    </div>
+    
+    <div class="badges-container" id="badgesContainer">
+        <!-- Badges will be populated by client script -->
+        <div class="loading-placeholder">
+            <i class="fa fa-spinner fa-spin"></i>
+            Loading achievements...
+        </div>
+    </div>
+</div>
+
+<style>
+.snas-badge-widget {
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1B365D;
+}
+
+.widget-header h3 {
+    color: #1B365D;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.widget-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.badges-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    min-height: 200px;
+}
+
+.badge-card {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    background: #fff;
+}
+
+.badge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.badge-header {
+    background: linear-gradient(135deg, #1B365D, #2c5282);
+    color: white;
+    padding: 10px;
+    position: relative;
+}
+
+.badge-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.badge-issuer {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.priority-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #FFD700;
+}
+
+.priority-indicator.medium {
+    background: #ffc107;
+}
+
+.priority-indicator.low {
+    background: #6c757d;
+}
+
+.badge-body {
+    padding: 10px;
+}
+
+.badge-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.badge-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+    font-size: 0.8rem;
+}
+
+.priority-score {
+    background: #FFD700;
+    color: #1B365D;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.loading-placeholder {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .widget-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .widget-controls {
+        justify-content: center;
+    }
+    
+    .badges-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// SNAS Badge Display Widget Client Script
+(function() {
+    'use strict';
+    
+    // Sample achievement data - in real implementation, this would come from server
+    const sampleBadges = [
+        {
+            id: 'csa-001',
+            name: 'Certified System Administrator (CSA)',
+            issuer: 'ServiceNow',
+            type: 'certification',
+            date_earned: '2024-08-15',
+            description: 'Comprehensive ServiceNow platform administration certification.',
+            category: 'Platform Administration',
+            priority_score: 95
+        },
+        {
+            id: 'cis-itsm-001',
+            name: 'Certified Implementation Specialist - ITSM',
+            issuer: 'ServiceNow',
+            type: 'certification',
+            date_earned: '2024-07-22',
+            description: 'Advanced ITSM implementation certification.',
+            category: 'ITSM Implementation',
+            priority_score: 88
+        },
+        {
+            id: 'riseup-001',
+            name: 'RiseUp Achievement Badge',
+            issuer: 'ServiceNow',
+            type: 'achievement',
+            date_earned: '2024-09-10',
+            description: 'Recognition for diversity and inclusion leadership.',
+            category: 'Community Impact',
+            priority_score: 82
+        }
+    ];
+    
+    // Initialize widget
+    function initWidget() {
+        loadBadges(sampleBadges);
+        setupEventListeners();
+    }
+    
+    function setupEventListeners() {
+        const audienceFilter = document.getElementById('audience-filter');
+        if (audienceFilter) {
+            audienceFilter.addEventListener('change', function() {
+                const audience = this.value;
+                const filteredBadges = filterBadgesByAudience(sampleBadges, audience);
+                loadBadges(filteredBadges);
+            });
+        }
+    }
+    
+    function filterBadgesByAudience(badges, audience) {
+        if (audience === 'all') return badges;
+        
+        return badges.map(badge => {
+            let score = badge.priority_score || 50;
+            
+            // Adjust score based on audience
+            if (audience === 'it_recruiters' && badge.name.includes('CSA')) {
+                score += 10;
+            } else if (audience === 'veteran_community' && badge.category === 'Community Impact') {
+                score += 10;
+            } else if (audience === 'servicenow_professionals' && badge.issuer === 'ServiceNow') {
+                score += 5;
+            }
+            
+            return { ...badge, priority_score: score };
+        }).sort((a, b) => b.priority_score - a.priority_score);
+    }
+    
+    function loadBadges(badges) {
+        const container = document.getElementById('badgesContainer');
+        if (!container) return;
+        
+        container.innerHTML = badges.map(badge => createBadgeCard(badge)).join('');
+    }
+    
+    function createBadgeCard(badge) {
+        const score = badge.priority_score || 50;
+        const priorityClass = score >= 90 ? 'high' : score >= 70 ? 'medium' : 'low';
+        const formattedDate = new Date(badge.date_earned).toLocaleDateString();
+        
+        return `
+            <div class="badge-card">
+                <div class="badge-header">
+                    <div class="priority-indicator ${priorityClass}"></div>
+                    <div class="badge-title">${badge.name}</div>
+                    <div class="badge-issuer">${badge.issuer}</div>
+                </div>
+                <div class="badge-body">
+                    <div class="badge-description">${badge.description}</div>
+                    <div class="badge-meta">
+                        <span>Earned: ${formattedDate}</span>
+                        <span class="priority-score">${Math.round(score)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Global function for button click
+    window.prioritizeBadges = function() {
+        const audience = document.getElementById('audience-filter').value;
+        const prioritizedBadges = filterBadgesByAudience(sampleBadges, audience);
+        loadBadges(prioritizedBadges);
+        
+        // Show success message (you can customize this based on ServiceNow's messaging system)
+        console.log('AI prioritization completed for audience: ' + audience);
+    };
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWidget);
+    } else {
+        initWidget();
+    }
+})();
+</script>

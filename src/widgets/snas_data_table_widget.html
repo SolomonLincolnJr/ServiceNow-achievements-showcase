@@ -1,0 +1,483 @@
+<!-- SNAS Data Table Widget -->
+<div class="snas-datatable-widget">
+    <div class="widget-header">
+        <h3>📊 Achievements Data Table</h3>
+        <div class="table-controls">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search achievements..." style="width: 200px;">
+            <select id="categoryFilter" class="form-control" style="width: 150px;">
+                <option value="">All Categories</option>
+                <option value="certification">Certifications</option>
+                <option value="achievement">Achievements</option>
+                <option value="badge">Badges</option>
+            </select>
+            <button class="btn btn-sm btn-secondary" onclick="exportToCSV()">
+                <i class="fa fa-download"></i> Export
+            </button>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="table table-striped table-hover" id="achievementsTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)" class="sortable">
+                        Achievement Name <i class="fa fa-sort"></i>
+                    </th>
+                    <th onclick="sortTable(1)" class="sortable">
+                        Issuer <i class="fa fa-sort"></i>
+                    </th>
+                    <th onclick="sortTable(2)" class="sortable">
+                        Type <i class="fa fa-sort"></i>
+                    </th>
+                    <th onclick="sortTable(3)" class="sortable">
+                        Date Earned <i class="fa fa-sort"></i>
+                    </th>
+                    <th onclick="sortTable(4)" class="sortable">
+                        Priority Score <i class="fa fa-sort"></i>
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Table rows will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="table-footer">
+        <div class="table-info">
+            <span id="tableInfo">Showing 0 of 0 achievements</span>
+        </div>
+        <div class="pagination-controls">
+            <button class="btn btn-sm btn-outline-primary" id="prevBtn" onclick="changePage(-1)">Previous</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button class="btn btn-sm btn-outline-primary" id="nextBtn" onclick="changePage(1)">Next</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.snas-datatable-widget {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.widget-header {
+    background: linear-gradient(135deg, #1B365D, #2c5282);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.table-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.table-controls input,
+.table-controls select {
+    padding: 5px 10px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.table-controls input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.table-controls select option {
+    background: #1B365D;
+    color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+    color: #1B365D;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.sortable:hover {
+    background: #e9ecef !important;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.type-certification {
+    background: #d4edda;
+    color: #155724;
+}
+
+.type-achievement {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.type-badge-item {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.priority-cell {
+    text-align: center;
+}
+
+.priority-high {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.priority-medium {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.priority-low {
+    color: #6c757d;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-xs {
+    padding: 2px 6px;
+    font-size: 0.75rem;
+}
+
+.table-footer {
+    background: #f8f9fa;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #dee2e6;
+}
+
+.table-info {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#pageInfo {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .widget-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .table-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .table-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+    
+    // Sample data - would come from ServiceNow table in real implementation
+    const achievementsData = [
+        {
+            id: 'csa-001',
+            name: 'Certified System Administrator (CSA)',
+            issuer: 'ServiceNow',
+            type: 'certification',
+            date_earned: '2024-08-15',
+            priority_score: 95,
+            category: 'Platform Administration'
+        },
+        {
+            id: 'cis-itsm-001',
+            name: 'Certified Implementation Specialist - ITSM',
+            issuer: 'ServiceNow',
+            type: 'certification',
+            date_earned: '2024-07-22',
+            priority_score: 88,
+            category: 'ITSM Implementation'
+        },
+        {
+            id: 'riseup-001',
+            name: 'RiseUp Achievement Badge',
+            issuer: 'ServiceNow',
+            type: 'achievement',
+            date_earned: '2024-09-10',
+            priority_score: 82,
+            category: 'Community Impact'
+        },
+        {
+            id: 'dev-fundamentals-001',
+            name: 'Application Development Fundamentals',
+            issuer: 'ServiceNow',
+            type: 'badge',
+            date_earned: '2024-06-30',
+            priority_score: 78,
+            category: 'Development'
+        },
+        {
+            id: 'leadership-001',
+            name: 'Military Leadership Excellence',
+            issuer: 'U.S. Navy',
+            type: 'achievement',
+            date_earned: '2020-03-15',
+            priority_score: 85,
+            category: 'Leadership'
+        }
+    ];
+    
+    let currentData = [...achievementsData];
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let sortDirection = {};
+    
+    function initTable() {
+        setupEventListeners();
+        renderTable();
+        updateTableInfo();
+    }
+    
+    function setupEventListeners() {
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                filterData();
+            });
+        }
+        
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', function() {
+                filterData();
+            });
+        }
+    }
+    
+    function filterData() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const category = document.getElementById('categoryFilter').value;
+        
+        currentData = achievementsData.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(searchTerm) ||
+                                item.issuer.toLowerCase().includes(searchTerm) ||
+                                item.category.toLowerCase().includes(searchTerm);
+            
+            const matchesCategory = !category || item.type === category;
+            
+            return matchesSearch && matchesCategory;
+        });
+        
+        currentPage = 1;
+        renderTable();
+        updateTableInfo();
+    }
+    
+    function renderTable() {
+        const tableBody = document.getElementById('tableBody');
+        if (!tableBody) return;
+        
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = currentData.slice(startIndex, endIndex);
+        
+        tableBody.innerHTML = pageData.map(item => createTableRow(item)).join('');
+    }
+    
+    function createTableRow(item) {
+        const formattedDate = new Date(item.date_earned).toLocaleDateString();
+        const priorityClass = item.priority_score >= 90 ? 'priority-high' : 
+                            item.priority_score >= 70 ? 'priority-medium' : 'priority-low';
+        
+        return `
+            <tr>
+                <td>
+                    <strong>${item.name}</strong>
+                    <br>
+                    <small class="text-muted">${item.category}</small>
+                </td>
+                <td>${item.issuer}</td>
+                <td>
+                    <span class="type-badge type-${item.type}">${item.type}</span>
+                </td>
+                <td>${formattedDate}</td>
+                <td class="priority-cell">
+                    <span class="${priorityClass}">${item.priority_score}</span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-xs btn-outline-primary" onclick="viewDetails('${item.id}')">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="btn btn-xs btn-outline-secondary" onclick="editItem('${item.id}')">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    function updateTableInfo() {
+        const totalItems = currentData.length;
+        const startIndex = totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+        const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        document.getElementById('tableInfo').textContent = 
+            `Showing ${startIndex} to ${endIndex} of ${totalItems} achievements`;
+        
+        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+        
+        document.getElementById('prevBtn').disabled = currentPage <= 1;
+        document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+    }
+    
+    // Global functions
+    window.sortTable = function(columnIndex) {
+        const columns = ['name', 'issuer', 'type', 'date_earned', 'priority_score'];
+        const column = columns[columnIndex];
+        
+        if (!sortDirection[column]) {
+            sortDirection[column] = 'asc';
+        } else {
+            sortDirection[column] = sortDirection[column] === 'asc' ? 'desc' : 'asc';
+        }
+        
+        currentData.sort((a, b) => {
+            let valueA = a[column];
+            let valueB = b[column];
+            
+            if (column === 'date_earned') {
+                valueA = new Date(valueA);
+                valueB = new Date(valueB);
+            }
+            
+            if (column === 'priority_score') {
+                valueA = Number(valueA);
+                valueB = Number(valueB);
+            }
+            
+            if (typeof valueA === 'string') {
+                valueA = valueA.toLowerCase();
+                valueB = valueB.toLowerCase();
+            }
+            
+            if (sortDirection[column] === 'asc') {
+                return valueA > valueB ? 1 : -1;
+            } else {
+                return valueA < valueB ? 1 : -1;
+            }
+        });
+        
+        renderTable();
+    };
+    
+    window.changePage = function(direction) {
+        const totalPages = Math.ceil(currentData.length / itemsPerPage);
+        const newPage = currentPage + direction;
+        
+        if (newPage >= 1 && newPage <= totalPages) {
+            currentPage = newPage;
+            renderTable();
+            updateTableInfo();
+        }
+    };
+    
+    window.exportToCSV = function() {
+        const headers = ['Name', 'Issuer', 'Type', 'Date Earned', 'Priority Score', 'Category'];
+        const csvContent = [
+            headers.join(','),
+            ...currentData.map(item => [
+                `"${item.name}"`,
+                `"${item.issuer}"`,
+                item.type,
+                item.date_earned,
+                item.priority_score,
+                `"${item.category}"`
+            ].join(','))
+        ].join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'snas_achievements.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    };
+    
+    window.viewDetails = function(id) {
+        const item = achievementsData.find(a => a.id === id);
+        if (item) {
+            alert(`Achievement Details:\n\nName: ${item.name}\nIssuer: ${item.issuer}\nType: ${item.type}\nDate Earned: ${item.date_earned}\nPriority Score: ${item.priority_score}\nCategory: ${item.category}`);
+        }
+    };
+    
+    window.editItem = function(id) {
+        console.log('Edit item:', id);
+        // In real ServiceNow implementation, this would open an edit form or modal
+    };
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTable);
+    } else {
+        initTable();
+    }
+})();
+</script>

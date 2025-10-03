@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNAS Widget Showcase - All Available Widgets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1B365D 0%, #2c5282 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .showcase-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .showcase-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .showcase-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .widget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .widget-showcase {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 2px solid #FFD700;
+        }
+
+        .widget-header {
+            background: linear-gradient(135deg, #1B365D, #2c5282);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .widget-header h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .widget-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .widget-preview {
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .widget-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform: scale(0.8);
+            transform-origin: 0 0;
+            width: 125%;
+            height: 125%;
+        }
+
+        .widget-info {
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+
+        .widget-features {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .widget-features li {
+            background: #1B365D;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .integration-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .integration-section h2 {
+            color: #1B365D;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .dashboard-preview {
+            width: 100%;
+            height: 600px;
+            border: 3px solid #FFD700;
+            border-radius: 8px;
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin: 0 0.5rem;
+            background: #FFD700;
+            color: #1B365D;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #ffc107;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #1B365D;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #2c5282;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card i {
+            font-size: 2rem;
+            color: #1B365D;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            color: #1B365D;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .widget-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .showcase-header h1 {
+                font-size: 2rem;
+            }
+            
+            .widget-preview iframe {
+                transform: scale(0.6);
+                width: 167%;
+                height: 167%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="showcase-header">
+        <h1>🎖️ SNAS Widget Showcase</h1>
+        <p>Complete ServiceNow Widget Collection for AI-Enhanced Veteran Portfolio Management</p>
+    </div>
+
+    <div class="widget-grid">
+        <!-- Badge Display Widget -->
+        <div class="widget-showcase">
+            <div class="widget-header">
+                <h3>🏆 Badge Display Widget</h3>
+                <p>AI-powered achievement showcase with context-aware prioritization</p>
+            </div>
+            <div class="widget-preview">
+                <iframe src="snas_badge_display_widget.html" title="Badge Display Widget"></iframe>
+            </div>
+            <div class="widget-info">
+                <ul class="widget-features">
+                    <li>AI Prioritization</li>
+                    <li>Audience Targeting</li>
+                    <li>Visual Priority Indicators</li>
+                    <li>Responsive Grid</li>
+                    <li>Military Styling</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Data Table Widget -->
+        <div class="widget-showcase">
+            <div class="widget-header">
+                <h3>📊 Data Table Widget</h3>
+                <p>Comprehensive tabular achievement management with advanced filtering</p>
+            </div>
+            <div class="widget-preview">
+                <iframe src="snas_data_table_widget.html" title="Data Table Widget"></iframe>
+            </div>
+            <div class="widget-info">
+                <ul class="widget-features">
+                    <li>Sortable Columns</li>
+                    <li>Search & Filter</li>
+                    <li>CSV Export</li>
+                    <li>Pagination</li>
+                    <li>Action Buttons</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Simple List Widget -->
+        <div class="widget-showcase">
+            <div class="widget-header">
+                <h3>📈 Statistics Widget</h3>
+                <p>Real-time dashboard metrics with trend analysis and export capabilities</p>
+            </div>
+            <div class="widget-preview">
+                <iframe src="snas_simple_list_widget.html" title="Statistics Widget"></iframe>
+            </div>
+            <div class="widget-info">
+                <ul class="widget-features">
+                    <li>Live Statistics</li>
+                    <li>Trend Indicators</li>
+                    <li>Auto Refresh</li>
+                    <li>Download Reports</li>
+                    <li>Visual Icons</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Form Widget -->
+        <div class="widget-showcase">
+            <div class="widget-header">
+                <h3>🤖 AI Control Panel</h3>
+                <p>Advanced AI configuration with preset management and confidence monitoring</p>
+            </div>
+            <div class="widget-preview">
+                <iframe src="snas_form_widget.html" title="AI Control Panel Widget"></iframe>
+            </div>
+            <div class="widget-info">
+                <ul class="widget-features">
+                    <li>Audience Selection</li>
+                    <li>AI Parameters</li>
+                    <li>Quick Presets</li>
+                    <li>Confidence Tracking</li>
+                    <li>Custom Instructions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Integrated Dashboard Section -->
+    <div class="integration-section">
+        <h2>🚀 Integrated Dashboard Experience</h2>
+        <p style="text-align: center; margin-bottom: 2rem;">
+            All widgets work together seamlessly in the comprehensive SNAS dashboard
+        </p>
+        
+        <iframe src="snas_widget_dashboard.html" 
+                class="dashboard-preview"
+                title="Complete SNAS Dashboard"></iframe>
+        
+        <div class="action-buttons">
+            <a href="snas_widget_dashboard.html" class="btn" target="_blank">
+                <i class="fa fa-external-link-alt"></i> Open Full Dashboard
+            </a>
+            <button class="btn btn-secondary" onclick="downloadWidgets()">
+                <i class="fa fa-download"></i> Download All Widgets
+            </button>
+        </div>
+    </div>
+
+    <!-- Key Features Section -->
+    <div class="integration-section">
+        <h2>✨ Key Features & Capabilities</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fa fa-brain"></i>
+                <h4>AI-Powered</h4>
+                <p>Context-aware prioritization with 95% confidence rating</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fa fa-users"></i>
+                <h4>Multi-Audience</h4>
+                <p>Targeted content for recruiters, veterans, and professionals</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fa fa-mobile-alt"></i>
+                <h4>Responsive Design</h4>
+                <p>Optimized for desktop, tablet, and mobile devices</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fa fa-shield-alt"></i>
+                <h4>ServiceNow Native</h4>
+                <p>Built for ServiceNow platform with role-based security</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fa fa-flag-usa"></i>
+                <h4>Veteran-Focused</h4>
+                <p>Military heritage branding supporting Service to Success</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fa fa-chart-line"></i>
+                <h4>Real-time Analytics</h4>
+                <p>Live metrics with trend analysis and performance tracking</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Implementation Guide -->
+    <div class="integration-section">
+        <h2>🛠️ Quick Implementation Guide</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+            <div>
+                <h4 style="color: #1B365D; margin-bottom: 1rem;">📋 ServiceNow Integration</h4>
+                <ol style="padding-left: 1.5rem;">
+                    <li>Import <code>snas_widget_instance.xml</code></li>
+                    <li>Configure widget options in Service Portal</li>
+                    <li>Add to dashboard page layout</li>
+                    <li>Test AI functionality</li>
+                    <li>Deploy to production</li>
+                </ol>
+            </div>
+            
+            <div>
+                <h4 style="color: #1B365D; margin-bottom: 1rem;">🌐 Standalone Deployment</h4>
+                <ol style="padding-left: 1.5rem;">
+                    <li>Upload HTML files to web server</li>
+                    <li>Configure CORS headers</li>
+                    <li>Set up SSL/TLS encryption</li>
+                    <li>Integrate with existing systems</li>
+                    <li>Monitor performance</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="action-buttons" style="margin-top: 2rem;">
+            <a href="README.md" class="btn btn-secondary" target="_blank">
+                <i class="fa fa-book"></i> Full Documentation
+            </a>
+            <a href="../ui_pages/snas_portfolio_dashboard.html" class="btn btn-secondary" target="_blank">
+                <i class="fa fa-eye"></i> Original Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 ServiceNow Achievements Showcase (SNAS) | Veteran Excellence in Technology</p>
+        <p>Powered by AI-Enhanced Portfolio Management | Service to Success Initiative 🇺🇸</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            <strong>Built with Military Precision | Powered by AI Innovation | Serving Veteran Excellence</strong>
+        </p>
+    </div>
+
+    <script>
+        function downloadWidgets() {
+            alert('Widget Download Package:\n\n' +
+                  '✅ HTML Widgets (4 files)\n' +
+                  '✅ ServiceNow Integration (XML)\n' +
+                  '✅ Complete Documentation\n' +
+                  '✅ Implementation Guide\n' +
+                  '✅ Integrated Dashboard\n\n' +
+                  'All files are available in the /src/widgets/ directory');
+        }
+
+        // Show loading message
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframes = document.querySelectorAll('iframe');
+            let loadedCount = 0;
+            
+            iframes.forEach(iframe => {
+                iframe.addEventListener('load', function() {
+                    loadedCount++;
+                    if (loadedCount === iframes.length) {
+                        console.log('All SNAS widgets loaded successfully');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html></content>

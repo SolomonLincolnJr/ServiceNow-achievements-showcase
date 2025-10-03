@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNAS Widget Dashboard - ServiceNow Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1B365D 0%, #2c5282 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            background: rgba(27, 54, 93, 0.95);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #FFD700;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #FFD700;
+        }
+
+        .dashboard-header .subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        /* Left Column - Controls & Stats */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Right Column - Main Content */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Widget Container Styling */
+        .widget-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        /* Tab System */
+        .tab-system {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .tab-nav {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tab-nav button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-nav button.active {
+            background: #fff;
+            color: #1B365D;
+            border-bottom-color: #FFD700;
+        }
+
+        .tab-nav button:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Dashboard Actions */
+        .dashboard-actions {
+            background: rgba(27, 54, 93, 0.1);
+            padding: 1rem;
+            margin: 2rem auto 0;
+            max-width: 1400px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #1B365D;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2c5282;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #1B365D;
+            border: 2px solid #1B365D;
+        }
+
+        .btn-outline:hover {
+            background: #1B365D;
+            color: white;
+        }
+
+        /* Loading States */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(27, 54, 93, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Status Indicators */
+        .status-bar {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-bar.warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border-bottom-color: rgba(255, 193, 7, 0.3);
+        }
+
+        .status-bar.error {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-bottom-color: rgba(220, 53, 69, 0.3);
+        }
+
+        /* Footer */
+        .dashboard-footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .left-column {
+                order: 2;
+            }
+            
+            .right-column {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tab-nav {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Loading SNAS Dashboard...</h3>
+            <p>Initializing AI-enhanced portfolio widgets</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <h1>🎖️ SNAS Widget Dashboard</h1>
+        <p class="subtitle">AI-Enhanced Veteran Professional Portfolio | ServiceNow Achievements Showcase</p>
+    </header>
+
+    <!-- Status Bar -->
+    <div id="statusBar" class="status-bar">
+        <i class="fa fa-check-circle"></i>
+        All systems operational | AI confidence: 95% | Last updated: <span id="lastUpdate">Just now</span>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Left Column: Controls & Quick Stats -->
+        <div class="left-column">
+            <!-- AI Prioritization Form Widget -->
+            <div class="widget-container">
+                <iframe src="snas_form_widget.html" 
+                        width="100%" 
+                        height="600" 
+                        frameborder="0"
+                        title="AI Prioritization Controls">
+                </iframe>
+            </div>
+
+            <!-- Quick Stats Widget -->
+            <div class="widget-container">
+                <iframe src="snas_simple_list_widget.html" 
+                        width="100%" 
+                        height="400" 
+                        frameborder="0"
+                        title="Achievement Statistics">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Right Column: Main Content Area -->
+        <div class="right-column">
+            <!-- Tabbed Content Area -->
+            <div class="tab-system">
+                <div class="tab-nav">
+                    <button class="tab-button active" onclick="switchTab('badges')">
+                        <i class="fa fa-trophy"></i> Badge Display
+                    </button>
+                    <button class="tab-button" onclick="switchTab('datatable')">
+                        <i class="fa fa-table"></i> Data Table
+                    </button>
+                    <button class="tab-button" onclick="switchTab('analytics')">
+                        <i class="fa fa-chart-bar"></i> Analytics
+                    </button>
+                </div>
+
+                <!-- Badge Display Tab -->
+                <div id="badges" class="tab-content active">
+                    <iframe src="snas_badge_display_widget.html" 
+                            width="100%" 
+                            height="600" 
+                            frameborder="0"
+                            title="Badge Display Widget">
+                    </iframe>
+                </div>
+
+                <!-- Data Table Tab -->
+                <div id="datatable" class="tab-content">
+                    <iframe src="snas_data_table_widget.html" 
+                            width="100%" 
+                            height="600" 
+                            frameborder="0"
+                            title="Achievements Data Table">
+                    </iframe>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tab-content">
+                    <div style="padding: 2rem; text-align: center; color: #6c757d;">
+                        <i class="fa fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; color: #1B365D;"></i>
+                        <h3>Advanced Analytics Dashboard</h3>
+                        <p style="margin: 1rem 0;">Comprehensive portfolio analytics and performance metrics</p>
+                        <p style="font-size: 0.9rem;">This section would contain detailed analytics, trend analysis, and AI-powered insights about achievement performance and portfolio optimization recommendations.</p>
+                        <div style="margin-top: 2rem;">
+                            <button class="btn btn-primary" onclick="showAnalytics()">
+                                <i class="fa fa-play"></i> Launch Analytics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Actions -->
+    <div class="dashboard-actions">
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="refreshAllWidgets()">
+                <i class="fa fa-sync-alt"></i> Refresh All Widgets
+            </button>
+            <button class="btn btn-secondary" onclick="exportPortfolio()">
+                <i class="fa fa-download"></i> Export Portfolio
+            </button>
+            <button class="btn btn-outline" onclick="sharePortfolio()">
+                <i class="fa fa-share-alt"></i> Share Portfolio
+            </button>
+            <button class="btn btn-outline" onclick="openSettings()">
+                <i class="fa fa-cog"></i> Dashboard Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <p>&copy; 2024 ServiceNow Achievements Showcase (SNAS) | Veteran Excellence in Technology</p>
+        <p>Powered by AI-Enhanced Portfolio Management | Service to Success Initiative 🇺🇸</p>
+    </footer>
+
+    <script>
+        // SNAS Widget Dashboard Controller
+        class SNASDashboard {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.showLoading();
+                this.updateStatus();
+                this.setupAutoRefresh();
+                this.hideLoading();
+            }
+
+            showLoading() {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            }
+
+            hideLoading() {
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 1500);
+            }
+
+            updateStatus() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                });
+                document.getElementById('lastUpdate').textContent = timeString;
+            }
+
+            setupAutoRefresh() {
+                // Auto-refresh status every 30 seconds
+                setInterval(() => {
+                    this.updateStatus();
+                }, 30000);
+            }
+
+            showStatusMessage(message, type = 'success') {
+                const statusBar = document.getElementById('statusBar');
+                const originalContent = statusBar.innerHTML;
+                
+                statusBar.className = `status-bar ${type}`;
+                statusBar.innerHTML = `<i class="fa fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'times-circle'}"></i> ${message}`;
+                
+                setTimeout(() => {
+                    statusBar.className = 'status-bar';
+                    statusBar.innerHTML = originalContent;
+                }, 5000);
+            }
+        }
+
+        // Tab System
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.closest('.tab-button').classList.add('active');
+        }
+
+        // Dashboard Actions
+        function refreshAllWidgets() {
+            dashboard.showLoading();
+            dashboard.showStatusMessage('Refreshing all widgets...', 'warning');
+            
+            // Simulate refresh process
+            setTimeout(() => {
+                // Reload all iframes
+                document.querySelectorAll('iframe').forEach(iframe => {
+                    iframe.src = iframe.src;
+                });
+                
+                dashboard.hideLoading();
+                dashboard.showStatusMessage('All widgets refreshed successfully!');
+            }, 2000);
+        }
+
+        function exportPortfolio() {
+            dashboard.showStatusMessage('Preparing portfolio export...', 'warning');
+            
+            // Simulate export process
+            setTimeout(() => {
+                // In real implementation, this would generate a comprehensive portfolio export
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    achievements: 'Achievement data would be exported',
+                    analytics: 'Analytics data would be included',
+                    ai_insights: 'AI recommendations and insights'
+                };
+                
+                console.log('Portfolio Export:', exportData);
+                dashboard.showStatusMessage('Portfolio export completed!');
+                
+                // Simulate file download
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'snas_portfolio_export.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 1500);
+        }
+
+        function sharePortfolio() {
+            // In real ServiceNow implementation, this would create a shareable link
+            const shareUrl = window.location.href + '?share=true';
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SNAS Professional Portfolio',
+                    text: 'Check out my ServiceNow achievements and professional portfolio',
+                    url: shareUrl
+                });
+            } else {
+                // Fallback to clipboard
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    dashboard.showStatusMessage('Portfolio link copied to clipboard!');
+                });
+            }
+        }
+
+        function openSettings() {
+            dashboard.showStatusMessage('Opening dashboard settings...', 'warning');
+            // In real implementation, this would open a settings modal or page
+            alert('Dashboard Settings:\n\n• Widget Layout Configuration\n• AI Prioritization Defaults\n• Export Preferences\n• Notification Settings\n• Theme Customization');
+        }
+
+        function showAnalytics() {
+            dashboard.showStatusMessage('Loading advanced analytics...', 'warning');
+            // In real implementation, this would load comprehensive analytics
+            alert('Advanced Analytics Dashboard:\n\n• Achievement Performance Trends\n• AI Confidence Metrics\n• Portfolio Optimization Recommendations\n• Audience Engagement Analytics\n• Comparative Benchmarking');
+        }
+
+        // Initialize dashboard
+        let dashboard;
+        document.addEventListener('DOMContentLoaded', function() {
+            dashboard = new SNASDashboard();
+        });
+
+        // Handle iframe communication (if needed)
+        window.addEventListener('message', function(event) {
+            // Handle messages from widget iframes
+            if (event.data && event.data.type === 'widget_update') {
+                dashboard.showStatusMessage(`Widget updated: ${event.data.widget}`, 'success');
+            }
+        });
+    </script>
+</body>
+</html>

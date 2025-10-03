@@ -1,0 +1,459 @@
+<!-- SNAS Simple List Widget - Quick Stats -->
+<div class="snas-list-widget">
+    <div class="widget-header">
+        <h3>📈 Achievement Statistics</h3>
+        <div class="refresh-button">
+            <button class="btn btn-sm btn-outline-light" onclick="refreshStats()">
+                <i class="fa fa-refresh"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="stats-list">
+        <div class="stat-item highlight">
+            <div class="stat-icon">
+                <i class="fa fa-trophy"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" id="totalAchievements">40+</div>
+                <div class="stat-label">Total Achievements</div>
+                <div class="stat-trend">+3 this month</div>
+            </div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-icon certification">
+                <i class="fa fa-certificate"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" id="totalCertifications">15+</div>
+                <div class="stat-label">Certifications</div>
+                <div class="stat-trend">+2 recent</div>
+            </div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-icon servicenow">
+                <i class="fa fa-cogs"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" id="serviceNowBadges">25+</div>
+                <div class="stat-label">ServiceNow Badges</div>
+                <div class="stat-trend">Platform leader</div>
+            </div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-icon ai">
+                <i class="fa fa-brain"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" id="aiConfidence">95%</div>
+                <div class="stat-label">AI Confidence</div>
+                <div class="stat-trend">High accuracy</div>
+            </div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-icon military">
+                <i class="fa fa-star"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" id="militaryAchievements">10+</div>
+                <div class="stat-label">Military & Community</div>
+                <div class="stat-trend">Veteran excellence</div>
+            </div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-icon recent">
+                <i class="fa fa-clock-o"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" id="recentAchievements">5</div>
+                <div class="stat-label">Last 90 Days</div>
+                <div class="stat-trend">Active learning</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="widget-footer">
+        <div class="footer-actions">
+            <button class="btn btn-sm btn-primary" onclick="viewFullReport()">
+                View Full Report
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="downloadSummary()">
+                Download Summary
+            </button>
+        </div>
+        <div class="last-updated">
+            Last updated: <span id="lastUpdated">Just now</span>
+        </div>
+    </div>
+</div>
+
+<style>
+.snas-list-widget {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.widget-header {
+    background: linear-gradient(135deg, #1B365D, #2c5282);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.refresh-button button {
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.refresh-button button:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.stats-list {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border-left: 4px solid #dee2e6;
+}
+
+.stat-item:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.stat-item.highlight {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border-left-color: #FFD700;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    background: #1B365D;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.stat-icon.certification {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.stat-icon.servicenow {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+.stat-icon.ai {
+    background: linear-gradient(135deg, #6f42c1, #6610f2);
+}
+
+.stat-icon.military {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.stat-icon.recent {
+    background: linear-gradient(135deg, #fd7e14, #e55507);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #1B365D;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.stat-trend {
+    font-size: 0.8rem;
+    color: #28a745;
+    font-style: italic;
+}
+
+.widget-footer {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-actions .btn {
+    font-size: 0.85rem;
+    padding: 5px 12px;
+}
+
+.last-updated {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Animation for number updates */
+.stat-number.updating {
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .widget-footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .footer-actions .btn {
+        width: 100%;
+    }
+    
+    .stat-item {
+        padding: 12px;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+        font-size: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}
+
+/* Loading state */
+.loading .stat-number {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    color: transparent;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+    
+    // Sample statistics data - in real implementation, would come from ServiceNow GlideRecord queries
+    const statsData = {
+        total_achievements: 42,
+        certifications: 16,
+        servicenow_badges: 26,
+        ai_confidence: 0.95,
+        military_achievements: 12,
+        recent_achievements: 5,
+        trends: {
+            monthly_growth: 3,
+            certification_growth: 2
+        }
+    };
+    
+    function initStats() {
+        loadStats();
+        updateLastUpdated();
+        setupAutoRefresh();
+    }
+    
+    function loadStats() {
+        // Animate number updates
+        animateNumber('totalAchievements', statsData.total_achievements, '+');
+        animateNumber('totalCertifications', statsData.certifications, '+');
+        animateNumber('serviceNowBadges', statsData.servicenow_badges, '+');
+        animateNumber('aiConfidence', Math.round(statsData.ai_confidence * 100), '%');
+        animateNumber('militaryAchievements', statsData.military_achievements, '+');
+        animateNumber('recentAchievements', statsData.recent_achievements, '');
+    }
+    
+    function animateNumber(elementId, targetValue, suffix) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        element.classList.add('updating');
+        
+        // Simple animation - in real implementation, you might use more sophisticated animation
+        setTimeout(() => {
+            element.textContent = targetValue + suffix;
+            element.classList.remove('updating');
+        }, 300);
+    }
+    
+    function updateLastUpdated() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit'
+        });
+        document.getElementById('lastUpdated').textContent = timeString;
+    }
+    
+    function setupAutoRefresh() {
+        // Auto-refresh stats every 5 minutes
+        setInterval(() => {
+            refreshStats();
+        }, 5 * 60 * 1000);
+    }
+    
+    // Global functions
+    window.refreshStats = function() {
+        // Add loading state
+        document.querySelectorAll('.stat-number').forEach(el => {
+            el.classList.add('loading');
+        });
+        
+        // Simulate API call delay
+        setTimeout(() => {
+            // In real implementation, this would fetch fresh data from ServiceNow
+            const updatedStats = {
+                ...statsData,
+                // Simulate slight changes
+                recent_achievements: statsData.recent_achievements + Math.floor(Math.random() * 2),
+                ai_confidence: Math.min(0.98, statsData.ai_confidence + (Math.random() - 0.5) * 0.02)
+            };
+            
+            Object.assign(statsData, updatedStats);
+            
+            document.querySelectorAll('.stat-number').forEach(el => {
+                el.classList.remove('loading');
+            });
+            
+            loadStats();
+            updateLastUpdated();
+            
+            // Show success feedback
+            showFeedback('Stats refreshed successfully!', 'success');
+        }, 1000);
+    };
+    
+    window.viewFullReport = function() {
+        // In ServiceNow, this would navigate to a detailed report page
+        console.log('Opening full achievement report...');
+        alert('Full Report: This would open a detailed analytics dashboard showing comprehensive achievement metrics, trends, and AI insights.');
+    };
+    
+    window.downloadSummary = function() {
+        // Generate and download a summary report
+        const summaryData = {
+            'Total Achievements': statsData.total_achievements,
+            'Certifications': statsData.certifications,
+            'ServiceNow Badges': statsData.servicenow_badges,
+            'AI Confidence': Math.round(statsData.ai_confidence * 100) + '%',
+            'Military & Community': statsData.military_achievements,
+            'Recent (90 days)': statsData.recent_achievements,
+            'Generated': new Date().toISOString()
+        };
+        
+        const csvContent = Object.entries(summaryData)
+            .map(([key, value]) => `"${key}","${value}"`)
+            .join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'snas_achievement_summary.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        showFeedback('Summary downloaded successfully!', 'success');
+    };
+    
+    function showFeedback(message, type) {
+        // Create temporary feedback message
+        const feedback = document.createElement('div');
+        feedback.className = `alert alert-${type === 'success' ? 'success' : 'info'}`;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 15px;
+            border-radius: 4px;
+            background: ${type === 'success' ? '#d4edda' : '#d1ecf1'};
+            color: ${type === 'success' ? '#155724' : '#0c5460'};
+            border: 1px solid ${type === 'success' ? '#c3e6cb' : '#bee5eb'};
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        `;
+        feedback.textContent = message;
+        
+        document.body.appendChild(feedback);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initStats);
+    } else {
+        initStats();
+    }
+})();
+</script>
