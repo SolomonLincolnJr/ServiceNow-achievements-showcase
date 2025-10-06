@@ -1,0 +1,682 @@
+<!--
+SNAS LinkedIn Export Flow - UI Builder Component
+Military Heritage Branding with WCAG 2.1 AA Accessibility Compliance
+
+Component: LinkedIn Share Button with SNAS Branding
+Colors: Navy (#1B365D) Primary, Gold (#FFD700) Accent
+Accessibility: Screen reader support, keyboard navigation, high contrast
+Performance: <0.5s render time, optimized animations
+-->
+
+<div class="snas-linkedin-share-container" 
+     role="region" 
+     aria-labelledby="snas-share-heading"
+     data-component="snas-linkedin-export">
+     
+    <!-- Component Header -->
+    <h3 id="snas-share-heading" class="snas-share-title">
+        <span class="snas-military-icon" aria-hidden="true">🎖️</span>
+        Share Achievement to LinkedIn
+    </h3>
+    
+    <!-- Achievement Display Card -->
+    <div class="snas-achievement-card" 
+         role="article"
+         aria-labelledby="achievement-title"
+         tabindex="0">
+         
+        <div class="snas-achievement-header">
+            <h4 id="achievement-title" class="snas-achievement-title">
+                {{data.achievement.title}}
+            </h4>
+            <div class="snas-achievement-meta">
+                <span class="snas-category-badge snas-category-{{data.achievement.category.toLowerCase()}}">
+                    {{data.achievement.category}}
+                </span>
+                <span class="snas-priority-score" aria-label="Priority score {{data.achievement.priority_score}} out of 100">
+                    {{data.achievement.priority_score}}/100
+                </span>
+            </div>
+        </div>
+        
+        <div class="snas-achievement-body">
+            <p class="snas-achievement-description">
+                {{data.achievement.description}}
+            </p>
+            
+            <!-- Badge Image Display -->
+            <div class="snas-badge-container" ng-if="data.achievement.badge_image">
+                <img src="{{data.achievement.badge_image}}" 
+                     alt="Achievement badge for {{data.achievement.title}}"
+                     class="snas-badge-image"
+                     loading="lazy">
+            </div>
+        </div>
+        
+        <!-- Content Preview -->
+        <div class="snas-content-preview" 
+             role="region" 
+             aria-labelledby="preview-heading">
+            <h5 id="preview-heading" class="snas-preview-title">LinkedIn Post Preview</h5>
+            <div class="snas-linkedin-preview" 
+                 aria-label="Preview of LinkedIn post content">
+                <div class="snas-preview-content" id="linkedin-content-preview">
+                    Loading preview...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="snas-action-container" role="toolbar" aria-label="LinkedIn sharing actions">
+        
+        <!-- Primary Share Button -->
+        <button class="snas-share-button snas-button-primary"
+                id="snas-linkedin-share-btn"
+                type="button"
+                onclick="snasLinkedInShare.shareAchievement()"
+                aria-describedby="share-button-desc"
+                data-achievement-id="{{data.achievement.sys_id}}">
+            
+            <span class="snas-button-icon" aria-hidden="true">📤</span>
+            <span class="snas-button-text">Share to LinkedIn</span>
+            
+            <!-- Loading Spinner -->
+            <div class="snas-loading-spinner" aria-hidden="true" style="display: none;">
+                <div class="snas-spinner"></div>
+            </div>
+        </button>
+        
+        <!-- Secondary Actions -->
+        <button class="snas-share-button snas-button-secondary"
+                type="button"
+                onclick="snasLinkedInShare.previewContent()"
+                aria-label="Preview LinkedIn content before sharing">
+            <span class="snas-button-icon" aria-hidden="true">👁️</span>
+            <span class="snas-button-text">Preview</span>
+        </button>
+        
+        <button class="snas-share-button snas-button-secondary"
+                type="button"
+                onclick="snasLinkedInShare.editContent()"
+                aria-label="Edit LinkedIn post content">
+            <span class="snas-button-icon" aria-hidden="true">✏️</span>
+            <span class="snas-button-text">Edit</span>
+        </button>
+    </div>
+    
+    <!-- Accessibility Descriptions -->
+    <div id="share-button-desc" class="sr-only">
+        Shares your {{data.achievement.title}} achievement to LinkedIn with military heritage messaging. 
+        This action will trigger the SNAS LinkedIn Export Flow.
+    </div>
+    
+    <!-- Status Messages -->
+    <div class="snas-status-container" 
+         role="status" 
+         aria-live="polite" 
+         aria-atomic="true">
+        <div id="snas-status-message" class="snas-status-message"></div>
+    </div>
+    
+    <!-- Progress Indicator -->
+    <div class="snas-progress-container" style="display: none;">
+        <div class="snas-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="snas-progress-fill"></div>
+        </div>
+        <div class="snas-progress-text">Sharing to LinkedIn...</div>
+    </div>
+</div>
+
+<!-- Modal for Content Editing -->
+<div id="snas-edit-modal" class="snas-modal" style="display: none;" role="dialog" aria-labelledby="edit-modal-title" aria-modal="true">
+    <div class="snas-modal-backdrop" onclick="snasLinkedInShare.closeModal()"></div>
+    <div class="snas-modal-content">
+        <header class="snas-modal-header">
+            <h2 id="edit-modal-title">Edit LinkedIn Post</h2>
+            <button type="button" class="snas-modal-close" onclick="snasLinkedInShare.closeModal()" aria-label="Close edit dialog">
+                <span aria-hidden="true">×</span>
+            </button>
+        </header>
+        
+        <div class="snas-modal-body">
+            <form id="snas-content-form">
+                <div class="snas-form-group">
+                    <label for="linkedin-content-textarea" class="snas-form-label">Post Content</label>
+                    <textarea id="linkedin-content-textarea" 
+                              class="snas-form-textarea"
+                              rows="8"
+                              maxlength="1300"
+                              aria-describedby="content-help"
+                              placeholder="Enter your LinkedIn post content..."></textarea>
+                    <div id="content-help" class="snas-form-help">
+                        Maximum 1,300 characters. Military heritage messaging encouraged.
+                    </div>
+                    <div class="snas-char-counter">
+                        <span id="char-count">0</span>/1300 characters
+                    </div>
+                </div>
+                
+                <div class="snas-form-group">
+                    <label for="hashtags-input" class="snas-form-label">Hashtags</label>
+                    <input type="text" 
+                           id="hashtags-input" 
+                           class="snas-form-input"
+                           placeholder="#VeteranInTech #ServiceToSuccess #ServiceNow"
+                           aria-describedby="hashtags-help">
+                    <div id="hashtags-help" class="snas-form-help">
+                        Separate hashtags with spaces. Military and veteran hashtags recommended.
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <footer class="snas-modal-footer">
+            <button type="button" class="snas-share-button snas-button-secondary" onclick="snasLinkedInShare.closeModal()">
+                Cancel
+            </button>
+            <button type="button" class="snas-share-button snas-button-primary" onclick="snasLinkedInShare.saveContent()">
+                Save Changes
+            </button>
+        </footer>
+    </div>
+</div>
+
+<!-- CSS Styles Embedded for Performance -->
+<style>
+/* SNAS LinkedIn Export - Military Heritage UI Styles */
+/* WCAG 2.1 AA Compliant Design with Navy/Gold Branding */
+
+:root {
+    --snas-navy: #1B365D;
+    --snas-gold: #FFD700;
+    --snas-navy-light: #2A4A7A;
+    --snas-navy-dark: #0F2344;
+    --snas-gold-dark: #E6C200;
+    --snas-white: #FFFFFF;
+    --snas-gray-light: #F5F5F5;
+    --snas-gray-medium: #CCCCCC;
+    --snas-gray-dark: #666666;
+    --snas-success: #28A745;
+    --snas-error: #DC3545;
+    --snas-shadow: 0 2px 8px rgba(27, 54, 93, 0.15);
+}
+
+/* Main Container */
+.snas-linkedin-share-container {
+    background: var(--snas-white);
+    border: 2px solid var(--snas-gold);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 16px 0;
+    box-shadow: var(--snas-shadow);
+    transition: all 0.3s ease;
+    max-width: 600px;
+}
+
+.snas-linkedin-share-container:focus-within {
+    border-color: var(--snas-navy);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+}
+
+/* Typography */
+.snas-share-title {
+    color: var(--snas-navy);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.snas-military-icon {
+    font-size: 1.8rem;
+    filter: sepia(1) hue-rotate(37deg) saturate(3);
+}
+
+/* Achievement Card */
+.snas-achievement-card {
+    background: var(--snas-gray-light);
+    border: 1px solid var(--snas-gray-medium);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s ease;
+}
+
+.snas-achievement-card:focus {
+    outline: 2px solid var(--snas-navy);
+    outline-offset: 2px;
+}
+
+.snas-achievement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 16px;
+}
+
+.snas-achievement-title {
+    color: var(--snas-navy);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.snas-achievement-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.snas-category-badge {
+    background: var(--snas-navy);
+    color: var(--snas-gold);
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.snas-priority-score {
+    background: var(--snas-gold);
+    color: var(--snas-navy);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.snas-achievement-description {
+    color: var(--snas-gray-dark);
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+}
+
+/* Badge Image */
+.snas-badge-container {
+    text-align: center;
+    margin: 16px 0;
+}
+
+.snas-badge-image {
+    max-width: 120px;
+    max-height: 120px;
+    border-radius: 50%;
+    border: 3px solid var(--snas-gold);
+    box-shadow: var(--snas-shadow);
+}
+
+/* Content Preview */
+.snas-content-preview {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--snas-white);
+    border: 1px solid var(--snas-gray-medium);
+    border-radius: 6px;
+}
+
+.snas-preview-title {
+    color: var(--snas-navy);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+}
+
+.snas-linkedin-preview {
+    background: var(--snas-gray-light);
+    padding: 16px;
+    border-radius: 4px;
+    border-left: 4px solid var(--snas-gold);
+}
+
+.snas-preview-content {
+    color: var(--snas-gray-dark);
+    line-height: 1.4;
+    white-space: pre-line;
+    font-size: 0.9rem;
+}
+
+/* Buttons */
+.snas-action-container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.snas-share-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    min-height: 48px; /* Touch target */
+    position: relative;
+    overflow: hidden;
+}
+
+.snas-button-primary {
+    background: var(--snas-navy);
+    color: var(--snas-gold);
+    box-shadow: 0 2px 4px rgba(27, 54, 93, 0.3);
+}
+
+.snas-button-primary:hover:not(:disabled) {
+    background: var(--snas-navy-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(27, 54, 93, 0.4);
+}
+
+.snas-button-primary:active {
+    transform: translateY(0);
+}
+
+.snas-button-primary:focus {
+    outline: 2px solid var(--snas-gold);
+    outline-offset: 2px;
+}
+
+.snas-button-secondary {
+    background: var(--snas-white);
+    color: var(--snas-navy);
+    border: 2px solid var(--snas-navy);
+}
+
+.snas-button-secondary:hover:not(:disabled) {
+    background: var(--snas-navy);
+    color: var(--snas-gold);
+}
+
+.snas-button-secondary:focus {
+    outline: 2px solid var(--snas-navy);
+    outline-offset: 2px;
+}
+
+/* Button States */
+.snas-share-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.snas-share-button.loading .snas-button-text {
+    opacity: 0;
+}
+
+.snas-share-button.loading .snas-loading-spinner {
+    display: block !important;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Loading Spinner */
+.snas-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-top: 2px solid var(--snas-gold);
+    border-radius: 50%;
+    animation: snas-spin 1s linear infinite;
+}
+
+@keyframes snas-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Progress Bar */
+.snas-progress-container {
+    margin-top: 16px;
+}
+
+.snas-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--snas-gray-light);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.snas-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--snas-navy), var(--snas-gold));
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.snas-progress-text {
+    color: var(--snas-gray-dark);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+/* Status Messages */
+.snas-status-message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 16px;
+    font-weight: 600;
+    display: none;
+}
+
+.snas-status-message.success {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--snas-success);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.snas-status-message.error {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--snas-error);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+/* Modal Styles */
+.snas-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.snas-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.snas-modal-content {
+    background: var(--snas-white);
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.snas-modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--snas-gray-medium);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.snas-modal-header h2 {
+    color: var(--snas-navy);
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.snas-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    color: var(--snas-gray-dark);
+    border-radius: 4px;
+}
+
+.snas-modal-close:hover {
+    background: var(--snas-gray-light);
+}
+
+.snas-modal-body {
+    padding: 20px 24px;
+}
+
+.snas-modal-footer {
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--snas-gray-medium);
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* Form Styles */
+.snas-form-group {
+    margin-bottom: 20px;
+}
+
+.snas-form-label {
+    display: block;
+    color: var(--snas-navy);
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.snas-form-input,
+.snas-form-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--snas-gray-medium);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.snas-form-input:focus,
+.snas-form-textarea:focus {
+    outline: none;
+    border-color: var(--snas-navy);
+    box-shadow: 0 0 0 2px rgba(27, 54, 93, 0.2);
+}
+
+.snas-form-help {
+    color: var(--snas-gray-dark);
+    font-size: 0.875rem;
+    margin-top: 4px;
+}
+
+.snas-char-counter {
+    text-align: right;
+    color: var(--snas-gray-dark);
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+/* Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .snas-linkedin-share-container {
+        padding: 16px;
+        margin: 8px 0;
+    }
+    
+    .snas-achievement-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .snas-achievement-meta {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .snas-action-container {
+        flex-direction: column;
+    }
+    
+    .snas-share-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .snas-linkedin-share-container {
+        border-width: 3px;
+    }
+    
+    .snas-share-button {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .snas-share-button,
+    .snas-achievement-card,
+    .snas-progress-fill {
+        transition: none;
+    }
+    
+    .snas-spinner {
+        animation: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .snas-linkedin-share-container {
+        box-shadow: none;
+        border: 2px solid #000;
+    }
+    
+    .snas-action-container {
+        display: none;
+    }
+}
+</style>

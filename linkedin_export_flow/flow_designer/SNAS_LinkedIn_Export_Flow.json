@@ -1,0 +1,237 @@
+{
+  "flow_name": "SNAS_LinkedIn_Export",
+  "description": "Military-heritage LinkedIn export flow for SNAS achievements with AI content generation and performance monitoring",
+  "scope": "x_snc_snas_port",
+  "version": "1.0.0",
+  "sla_targets": {
+    "total_execution": "1800ms",
+    "ai_content_generation": "200ms",
+    "rest_api_call": "800ms",
+    "success_rate": "95%"
+  },
+  "trigger": {
+    "type": "record_updated",
+    "table": "x_snc_snas_port_snas_achievements",
+    "condition": "export_requested changes to true",
+    "description": "Triggers when a user requests LinkedIn export for an achievement"
+  },
+  "flow_actions": [
+    {
+      "action_id": "1",
+      "name": "Lookup Achievement Details",
+      "type": "lookup_record",
+      "description": "Retrieve complete achievement record for LinkedIn export",
+      "performance_target": "50ms",
+      "configuration": {
+        "table": "x_snc_snas_port_snas_achievements",
+        "sys_id": "${trigger.record.sys_id}",
+        "outputs": [
+          "title",
+          "description", 
+          "badge_image",
+          "user_sys_id",
+          "category",
+          "priority_score",
+          "achievement_date"
+        ]
+      },
+      "error_handling": {
+        "on_failure": "stop_flow",
+        "error_message": "Failed to retrieve achievement details"
+      }
+    },
+    {
+      "action_id": "2", 
+      "name": "Get User Information",
+      "type": "lookup_record",
+      "description": "Retrieve user details for personalized LinkedIn content",
+      "performance_target": "50ms",
+      "configuration": {
+        "table": "sys_user",
+        "sys_id": "${action1.user_sys_id}",
+        "outputs": [
+          "name",
+          "email", 
+          "sys_id",
+          "title",
+          "department"
+        ]
+      },
+      "error_handling": {
+        "on_failure": "continue_with_defaults",
+        "default_values": {
+          "name": "SNAS Professional"
+        }
+      }
+    },
+    {
+      "action_id": "3",
+      "name": "Generate Military-Heritage AI Content", 
+      "type": "script_step",
+      "description": "Generate LinkedIn post content with military heritage and Service-to-Success messaging",
+      "performance_target": "200ms",
+      "script": "generate_linkedin_content.js",
+      "inputs": [
+        "achievement_title: ${action1.title}",
+        "achievement_description: ${action1.description}",
+        "user_name: ${action2.name}",
+        "category: ${action1.category}",
+        "priority_score: ${action1.priority_score}"
+      ],
+      "outputs": [
+        "linkedin_content",
+        "hashtags",
+        "generation_time_ms"
+      ]
+    },
+    {
+      "action_id": "4",
+      "name": "Build LinkedIn API Payload",
+      "type": "script_step", 
+      "description": "Construct JSON payload for LinkedIn v2 shares API with proper formatting",
+      "performance_target": "100ms",
+      "script": "build_api_payload.js",
+      "inputs": [
+        "user_sys_id: ${action1.user_sys_id}",
+        "badge_image: ${action1.badge_image}",
+        "linkedin_content: ${action3.linkedin_content}",
+        "hashtags: ${action3.hashtags}"
+      ],
+      "outputs": [
+        "api_payload",
+        "payload_size_bytes"
+      ]
+    },
+    {
+      "action_id": "5",
+      "name": "LinkedIn API REST Call",
+      "type": "rest_step",
+      "description": "Execute LinkedIn API call with retry logic and performance monitoring", 
+      "performance_target": "800ms",
+      "configuration": {
+        "method": "POST",
+        "endpoint_property": "x_snc_snas_port.linkedin_api_endpoint",
+        "mock_endpoint_property": "x_snc_snas_port.linkedin_mock_endpoint", 
+        "mock_mode_property": "x_snc_snas_port.linkedin_mock_mode",
+        "headers": {
+          "Authorization": "Bearer ${property.x_snc_snas_port.linkedin_oauth_token}",
+          "Content-Type": "application/json",
+          "X-Restli-Protocol-Version": "2.0.0",
+          "User-Agent": "ServiceNow-SNAS/1.0"
+        },
+        "body": "${action4.api_payload}",
+        "timeout_ms": "${property.x_snc_snas_port.linkedin_timeout_ms}",
+        "max_retries": "${property.x_snc_snas_port.linkedin_max_retries}",
+        "retry_delay_ms": "${property.x_snc_snas_port.linkedin_retry_delay_ms}"
+      },
+      "outputs": [
+        "response_status",
+        "response_body",
+        "response_id", 
+        "execution_time_ms",
+        "retry_count"
+      ]
+    },
+    {
+      "action_id": "6",
+      "name": "Create Export Log Entry",
+      "type": "create_record",
+      "description": "Log export attempt with detailed performance and outcome data",
+      "performance_target": "100ms",
+      "configuration": {
+        "table": "x_snc_snas_port_snas_export_logs",
+        "fields": {
+          "achievement_id": "${trigger.record.sys_id}",
+          "export_time": "${now}",
+          "status": "${action5.response_status >= 200 && action5.response_status < 300 ? 'Success' : 'Failed'}",
+          "error_message": "${action5.response_status >= 400 ? action5.response_body : ''}",
+          "response_id": "${action5.response_id}",
+          "execution_time_ms": "${action5.execution_time_ms}",
+          "retry_count": "${action5.retry_count}",
+          "user_agent": "ServiceNow-SNAS-Flow/1.0",
+          "flow_execution_id": "${flow.execution_id}"
+        }
+      }
+    },
+    {
+      "action_id": "7",
+      "name": "UI Notification with SNAS Branding",
+      "type": "script_step",
+      "description": "Send branded notification to UI with military heritage styling",
+      "performance_target": "50ms", 
+      "script": "send_ui_notification.js",
+      "inputs": [
+        "status: ${action6.status}",
+        "achievement_title: ${action1.title}",
+        "error_message: ${action6.error_message}",
+        "navy_color: ${property.x_snc_snas_port.brand_color_navy}",
+        "gold_color: ${property.x_snc_snas_port.brand_color_gold}"
+      ],
+      "outputs": [
+        "notification_sent",
+        "notification_type"
+      ]
+    },
+    {
+      "action_id": "8",
+      "name": "Create Incident on Failure",
+      "type": "create_record",
+      "description": "Generate incident for failed exports with full context",
+      "condition": "${action6.status == 'Failed'}",
+      "performance_target": "150ms",
+      "configuration": {
+        "table": "incident",
+        "fields": {
+          "short_description": "SNAS LinkedIn Export Failure: ${action1.title}",
+          "description": "LinkedIn export failed for SNAS achievement.\n\nDetails:\n- Achievement: ${action1.title}\n- User: ${action2.name}\n- Error: ${action6.error_message}\n- Execution Time: ${action5.execution_time_ms}ms\n- Flow ID: ${flow.execution_id}",
+          "caller_id": "${action1.user_sys_id}",
+          "category": "Software",
+          "subcategory": "Integration", 
+          "priority": "3",
+          "urgency": "3",
+          "assignment_group": "SNAS Support",
+          "work_notes": "Auto-generated by SNAS LinkedIn Export Flow. Priority based on achievement score: ${action1.priority_score}"
+        }
+      }
+    }
+  ],
+  "performance_monitoring": {
+    "enabled": "${property.x_snc_snas_port.linkedin_performance_monitoring}",
+    "metrics": [
+      "total_execution_time",
+      "action_execution_times", 
+      "api_response_times",
+      "success_rate",
+      "error_rates_by_type"
+    ],
+    "sla_validation": {
+      "total_flow_sla": 1800,
+      "ai_content_sla": 200,
+      "rest_call_sla": 800,
+      "success_rate_target": 95
+    }
+  },
+  "accessibility": {
+    "wcag_level": "AA",
+    "aria_support": true,
+    "color_contrast": {
+      "navy_gold_ratio": "4.5:1",
+      "meets_aa_standard": true
+    },
+    "screen_reader_support": true
+  },
+  "military_heritage": {
+    "branding": {
+      "primary_color": "#1B365D",
+      "accent_color": "#FFD700", 
+      "messaging_tone": "Service-to-Success",
+      "values": ["Excellence", "Discipline", "Leadership", "Service"]
+    },
+    "content_themes": [
+      "Military discipline meets technology innovation",
+      "Veterans leading in technology careers", 
+      "Service excellence translating to professional success",
+      "Community impact and veteran advancement"
+    ]
+  }
+}
