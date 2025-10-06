@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SNAS LinkedIn Export Flow - System Properties Configuration
+Create these system properties in ServiceNow: System Properties > System Properties
+
+Instructions:
+1. Navigate to System Properties > System Properties
+2. Click "New" for each property
+3. Set scope to x_snc_snas_port
+4. Configure as shown below
+5. For production: Replace mock values with actual LinkedIn API credentials
+
+Performance Target: Property access < 50ms
+Security: Encrypted storage for sensitive tokens
+-->
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>LinkedIn API endpoint for sharing posts via SNAS export flow. Production endpoint for LinkedIn v2 shares API.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.linkedin_api_endpoint</name>
+        <read_roles/>
+        <suffix>linkedin_api_endpoint</suffix>
+        <type>string</type>
+        <value>https://api.linkedin.com/v2/shares</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>LinkedIn OAuth access token for SNAS export flow API authentication. ENCRYPTED - Stores bearer token securely. For mock testing, leave blank to use mock endpoint.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>true</is_private>
+        <name>x_snc_snas_port.linkedin_oauth_token</name>
+        <read_roles>admin,x_snc_snas_port.admin</read_roles>
+        <suffix>linkedin_oauth_token</suffix>
+        <type>password</type>
+        <value></value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>Enable mock mode for LinkedIn API during development and testing. When true, uses mock responses instead of actual LinkedIn API calls.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.linkedin_mock_mode</name>
+        <read_roles/>
+        <suffix>linkedin_mock_mode</suffix>
+        <type>boolean</type>
+        <value>true</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>Mock LinkedIn API endpoint for testing SNAS export flow without actual LinkedIn integration. Used when mock_mode is enabled.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.linkedin_mock_endpoint</name>
+        <read_roles/>
+        <suffix>linkedin_mock_endpoint</suffix>
+        <type>string</type>
+        <value>https://httpbin.org/post</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>REST call timeout in milliseconds for LinkedIn API requests. Default 5000ms (5s) to meet SLA requirements of &lt;2s total flow execution.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.linkedin_timeout_ms</name>
+        <read_roles/>
+        <suffix>linkedin_timeout_ms</suffix>
+        <type>integer</type>
+        <value>5000</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>Maximum number of retry attempts for failed LinkedIn API calls. Implements exponential backoff strategy.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.linkedin_max_retries</name>
+        <read_roles/>
+        <suffix>linkedin_max_retries</suffix>
+        <type>integer</type>
+        <value>2</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>Retry delay in milliseconds for LinkedIn API failures. Base delay for exponential backoff calculation.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.linkedin_retry_delay_ms</name>
+        <read_roles/>
+        <suffix>linkedin_retry_delay_ms</suffix>
+        <type>integer</type>
+        <value>500</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>Enable performance monitoring and SLA tracking for SNAS LinkedIn export operations. Creates detailed execution logs.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.linkedin_performance_monitoring</name>
+        <read_roles/>
+        <suffix>linkedin_performance_monitoring</suffix>
+        <type>boolean</type>
+        <value>true</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>SNAS branding primary color (Navy) for UI components and notifications. Hex color code for military heritage theming.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.brand_color_navy</name>
+        <read_roles/>
+        <suffix>brand_color_navy</suffix>
+        <type>string</type>
+        <value>#1B365D</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>
+
+<record_update table="sys_properties">
+    <sys_properties>
+        <choices/>
+        <description>SNAS branding accent color (Gold) for highlights and interactive elements. Hex color code for military heritage theming.</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_snc_snas_port.brand_color_gold</name>
+        <read_roles/>
+        <suffix>brand_color_gold</suffix>
+        <type>string</type>
+        <value>#FFD700</value>
+        <write_roles>admin,x_snc_snas_port.admin</write_roles>
+    </sys_properties>
+</record_update>

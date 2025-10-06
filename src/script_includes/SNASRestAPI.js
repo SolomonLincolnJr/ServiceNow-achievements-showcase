@@ -16,9 +16,6 @@ SNASRestAPI.prototype = {
     initialize: function() {
         this.achievementAPI = new AchievementAPI();
         this.LOG_SOURCE = 'SNAS_REST_API';
-        this.GENSPARK_AI_VERSION = '1.2.0'; // Enhanced for Genspark.ai presentation
-        this.API_RATE_LIMIT = parseInt(gs.getProperty('x_snc_snas_port.api_rate_limit', '100'));
-        this.rateLimitTracker = {};
     },
 
     /**
@@ -33,18 +30,8 @@ SNASRestAPI.prototype = {
         var startTime = new GlideDateTime().getNumericValue();
         
         try {
-            // Check rate limiting
-            var clientId = request.getHeader('X-Client-ID') || 'anonymous';
-            if (!this._checkRateLimit(clientId)) {
-                return this._createEnhancedErrorResponse(429, 'Rate limit exceeded', {
-                    limit: this.API_RATE_LIMIT,
-                    window: '1 minute',
-                    retry_after: 60
-                });
-            }
-            
             // Log API access
-            gs.info(this.LOG_SOURCE + ': Prioritize badges API called by client: ' + clientId);
+            gs.info(this.LOG_SOURCE + ': Prioritize badges API called');
             
             // Parse request body
             var requestBody = request.body ? request.body.data : {};
@@ -76,35 +63,25 @@ SNASRestAPI.prototype = {
             var endTime = new GlideDateTime().getNumericValue();
             var processingTime = endTime - startTime;
             
-            // Add API-specific metadata with Genspark.ai enhancements
+            // Add API-specific metadata
             result.api_metadata = {
                 endpoint: 'POST /api/v1/prioritize-badges',
-                version: this.GENSPARK_AI_VERSION,
+                version: '1.0.0',
                 processing_time_ms: processingTime,
                 request_id: gs.generateGUID(),
-                veteran_mission_enabled: gs.getProperty('x_snc_snas_port.veteran_mission_enabled', 'true') === 'true',
-                genspark_ai_optimized: true,
-                performance_sla_met: processingTime <= 2000,
-                ai_integration_status: this.achievementAPI._isManusAIAvailable() ? 'active' : 'fallback',
-                timestamp: new GlideDateTime().toString()
+                veteran_mission_enabled: gs.getProperty('x_snc_snas_port.veteran_mission_enabled', 'true') === 'true'
             };
 
-            // Log analytics for Genspark.ai presentation
-            this._logAPIAnalytics('POST /api/v1/prioritize-badges', processingTime, true, { client_id: clientId });
-            
             return this._createResponse(200, result);
             
         } catch (error) {
             gs.error(this.LOG_SOURCE + ': Prioritize badges API error: ' + error.message);
-            
-            // Log error analytics
-            this._logAPIAnalytics('POST /api/v1/prioritize-badges', 
-                                  new GlideDateTime().getNumericValue() - startTime, false, 
-                                  { client_id: clientId, error: error.message });
-            
-            return this._createEnhancedErrorResponse(500, 'Internal server error during badge prioritization', {
+            return this._createResponse(500, {
+                success: false,
+                error: 'Internal server error during badge prioritization',
                 message: error.message,
-                request_id: gs.generateGUID()
+                api_version: '1.0.0',
+                timestamp: new GlideDateTime().toString()
             });
         }
     },
@@ -121,17 +98,7 @@ SNASRestAPI.prototype = {
         var startTime = new GlideDateTime().getNumericValue();
         
         try {
-            // Check rate limiting
-            var clientId = request.getHeader('X-Client-ID') || 'anonymous';
-            if (!this._checkRateLimit(clientId)) {
-                return this._createEnhancedErrorResponse(429, 'Rate limit exceeded', {
-                    limit: this.API_RATE_LIMIT,
-                    window: '1 minute',
-                    retry_after: 60
-                });
-            }
-            
-            gs.info(this.LOG_SOURCE + ': Content suggestions API called by client: ' + clientId);
+            gs.info(this.LOG_SOURCE + ': Content suggestions API called');
             
             // Parse query parameters
             var badgeId = request.queryParams.badge_id;
@@ -175,42 +142,27 @@ SNASRestAPI.prototype = {
             var endTime = new GlideDateTime().getNumericValue();
             var processingTime = endTime - startTime;
             
-            // Add API-specific metadata with Genspark.ai enhancements
+            // Add API-specific metadata
             result.api_metadata = {
                 endpoint: 'GET /api/v1/content-suggestions',
-                version: this.GENSPARK_AI_VERSION,
+                version: '1.0.0',
                 processing_time_ms: processingTime,
                 request_id: gs.generateGUID(),
                 badge_id: badgeId,
                 content_type: contentType,
-                target_audience: audience,
-                genspark_ai_optimized: true,
-                performance_sla_met: processingTime <= 2000,
-                ai_integration_status: this.achievementAPI._isManusAIAvailable() ? 'active' : 'fallback',
-                veteran_narrative_enabled: includeVeteranNarrative,
-                timestamp: new GlideDateTime().toString()
+                target_audience: audience
             };
 
-            // Log analytics for Genspark.ai presentation
-            this._logAPIAnalytics('GET /api/v1/content-suggestions', processingTime, true, { 
-                client_id: clientId, 
-                content_type: contentType,
-                audience: audience 
-            });
-            
             return this._createResponse(200, result);
             
         } catch (error) {
             gs.error(this.LOG_SOURCE + ': Content suggestions API error: ' + error.message);
-            
-            // Log error analytics
-            this._logAPIAnalytics('GET /api/v1/content-suggestions', 
-                                  new GlideDateTime().getNumericValue() - startTime, false, 
-                                  { client_id: clientId, error: error.message });
-            
-            return this._createEnhancedErrorResponse(500, 'Internal server error during content generation', {
+            return this._createResponse(500, {
+                success: false,
+                error: 'Internal server error during content generation',
                 message: error.message,
-                request_id: gs.generateGUID()
+                api_version: '1.0.0',
+                timestamp: new GlideDateTime().toString()
             });
         }
     },
@@ -321,72 +273,6 @@ SNASRestAPI.prototype = {
                 api_version: '1.0.0',
                 timestamp: new GlideDateTime().toString()
             });
-        }
-    },
-
-    /**
-     * Enhanced rate limiting for API protection
-     */
-    _checkRateLimit: function(clientId) {
-        var currentTime = new GlideDateTime().getNumericValue();
-        var windowStart = currentTime - 60000; // 1 minute window
-        
-        if (!this.rateLimitTracker[clientId]) {
-            this.rateLimitTracker[clientId] = [];
-        }
-        
-        // Clean old requests
-        this.rateLimitTracker[clientId] = this.rateLimitTracker[clientId].filter(function(timestamp) {
-            return timestamp > windowStart;
-        });
-        
-        // Check if over limit
-        if (this.rateLimitTracker[clientId].length >= this.API_RATE_LIMIT) {
-            return false;
-        }
-        
-        // Add current request
-        this.rateLimitTracker[clientId].push(currentTime);
-        return true;
-    },
-
-    /**
-     * Enhanced error response with Genspark.ai metadata
-     */
-    _createEnhancedErrorResponse: function(statusCode, message, details) {
-        return this._createResponse(statusCode, {
-            success: false,
-            error: message,
-            details: details || {},
-            api_version: this.GENSPARK_AI_VERSION,
-            veteran_mission_support: true,
-            genspark_ai_enhanced: true,
-            support_contact: 'SNAS Technical Team',
-            timestamp: new GlideDateTime().toString()
-        });
-    },
-
-    /**
-     * Log API analytics for Genspark.ai presentation metrics
-     */
-    _logAPIAnalytics: function(endpoint, processingTime, success, clientInfo) {
-        try {
-            var analyticsData = {
-                endpoint: endpoint,
-                processing_time_ms: processingTime,
-                success: success,
-                timestamp: new GlideDateTime().toString(),
-                sla_compliant: processingTime <= 2000,
-                client_info: clientInfo || {},
-                veteran_mission_context: true,
-                genspark_presentation_ready: true
-            };
-            
-            // In a production environment, this would write to an analytics table
-            gs.info(this.LOG_SOURCE + ' Analytics: ' + JSON.stringify(analyticsData));
-            
-        } catch (error) {
-            gs.warn(this.LOG_SOURCE + ': Analytics logging failed: ' + error.message);
         }
     },
 
@@ -574,20 +460,15 @@ SNASRestAPI.prototype = {
     },
 
     /**
-     * Create standardized REST API response with Genspark.ai enhancements
+     * Create standardized REST API response
      */
     _createResponse: function(statusCode, data) {
         return {
             status: statusCode,
             headers: {
                 'Content-Type': 'application/json',
-                'X-SNAS-API-Version': this.GENSPARK_AI_VERSION,
-                'X-SNAS-Veteran-Mission': 'Service-to-Success',
-                'X-SNAS-Genspark-AI': 'Enhanced',
-                'X-SNAS-Performance-SLA': '<2000ms',
-                'X-SNAS-AI-Integration': 'Manus.AI-Ready',
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'X-Response-Time': new GlideDateTime().getNumericValue() + 'ms'
+                'X-SNAS-API-Version': '1.0.0',
+                'X-SNAS-Veteran-Mission': 'Service-to-Success'
             },
             body: data
         };
